@@ -1,23 +1,31 @@
 #' regression_selected_pathways
 #'
 #' This function allows you to extracte enriched pathways for gene module/list via regressioin based method
-#' @param 
+#' @param gene_input A vecor of genes to be annotated. It should have same ID types(Ensembl ID, HUGO gene symbol) as the genes in \emph{gene_pathway_matrix}.
+#' @param gene_pathway_matrix A binary background matrix whose columns are the pathways/gene sets and 
+#'whose rows are all the genes from pathways/gene sets . It could be in sparse matrix format ((inherit from class "sparseMatrix" as in package Matrix) to save memory.
+#'For gene i and pathway j, the value of matrix(i,j) is 1 is gene i belonging to pathway j otherwise 0.
+#' @param lambda We use glmnet function to do regression. \emph{lambda} is an argument in \strong{glmnet}. See \strong{glmnet} function for more details
+#' Here we use default value 0.007956622 after preliminary study. It can be overridden by giving \emph{nlambda} and \emph{lambda.min.ratio arguments}.
+#' @param alpha The elasticnet mixing parameter, with 0≤α≤ 1. The penalty is defined as
+#'(1-α)/2||β||_2^2+α||β||_1.
+#'alpha=1 is the lasso penalty, and alpha=0 the ridge penalty. Default value: 0.5.
+#' @param ... Other paramaters for glmnet function.
+#' @return  A list of three element: 
+#' \itemize{
+#'   \item selected_pathways_coef - Regression coefficients value for selected pathways
+#'   \item selected_pathways_fisher_pvalue - Fisher exact pvalue for selected pathways
+#'   \item selected_pathways_num_genes - The number of genes for selected pathways in background
+#' }
 #' @keywords 
 #' @export
 #' @examples
-#' cat_function()
+#' a=regression_selected_pathways(gene_input =c("TRPC4AP","CDC37","TNIP1","IKBKB","NKIRAS2","NFKBIA","TIMM50","RELB","TNFAIP3","NFKBIB","HSPA1A","NFKBIE","SPAG9","NFKB2","ERLIN1","REL","TNIP2","TUBB6","MAP3K8"),gene_pathway_matrix=gene_pathway_matrix,lambda=0.007956622,alpha=0.5)
+
 ############regression functions
-regression_selected_pathways <-function(gene_input,lambda=0.007956622,alpha=0.5){
-  setwd("/pstore/home/fangt3/Disease_module_identification_DREAM_change")
-  data_path="/pstore/home/fangt3/Disease_module_identification_DREAM_change/"
-  go_ontology <- readRDS(paste(data_path,"go_ontology.rds",sep = ""))
-  reactome_ontology=readRDS(paste(data_path,"human_reactome_ontology.rds",sep = ""))
-  go_ontology_names=V(go_ontology)$pathway_names
-  names(go_ontology_names)=as_ids(V(go_ontology))
-  reactome_ontology_names=V(reactome_ontology)$pathway_names
-  names(reactome_ontology_names)=as_ids(V(reactome_ontology))
-  
-  load(paste(data_path,"gene_pathway_matrix.rda",sep = ""))     # 20227 17599
+regression_selected_pathways <-function(gene_input,gene_pathway_matrix=gene_pathway_matrix,lambda=0.007956622,alpha=0.5,...){
+  library(glmnet)
+  addi_args=list(...)
   all_genes=rownames(gene_pathway_matrix)
   all_pathways=colnames(gene_pathway_matrix)
   
@@ -27,7 +35,11 @@ regression_selected_pathways <-function(gene_input,lambda=0.007956622,alpha=0.5)
    
   if(length(module_common_genes)>1){                     # should set a lower thereshold for num of module common genes, more than 50%
     module_labels[module_common_genes]=1
-    cvfit=glmnet(gene_pathway_matrix,module_labels,lambda = lambda,alpha =alpha)   #
+    if(length(addi_args)==0){
+      cvfit=glmnet(gene_pathway_matrix,module_labels,lambda = lambda,alpha =alpha,...) 
+    }else{
+      cvfit=glmnet(gene_pathway_matrix,module_labels,alpha =alpha,...) 
+    }
     coef=coef(cvfit, s = "lambda.min")
     non0index=coef@i[-1]   #remove intercept
     non0coef=coef@x[-1]
@@ -37,19 +49,15 @@ regression_selected_pathways <-function(gene_input,lambda=0.007956622,alpha=0.5)
     names(selected_coef)=selected_pathways
     
     if(length(selected_pathways)>0){
-      selected_pathway_names=from_id2name(selected_pathways )
-      names(selected_coef)=selected_pathway_names
       fisher_exact_test_results=fisher_exact_test(selected_pathways,module_common_genes,gene_pathway_matrix )
       selected_pathways_fisher_pvalue=fisher_exact_test_results$selected_pathways_fisher_pvalue
       selected_pathways_num_genes=fisher_exact_test_results$selected_pathways_num_genes
       
-      pathway2gene_p=pathway2gene_plot_new(gene_pathway_matrix,selected_coef,selected_pathways,selected_pathway_names,selected_pathways_num_genes,module_common_genes)
-      
       new_order=order(selected_coef,decreasing = TRUE)
-      return(list(selected_pathways=selected_pathways[new_order],
-                  selected_pathway_names=selected_pathway_names[new_order],
+      return(list(selected_pathways_coef=selected_coef[new_order],
                   selected_pathways_fisher_pvalue=selected_pathways_fisher_pvalue[new_order],
-                  pathway2gene_p=pathway2gene_p))
+                  selected_pathways_num_genes=selected_pathways_num_genes[new_order]
+                  ))
     }else{
       return(NULL)}
   }
