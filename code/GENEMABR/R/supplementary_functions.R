@@ -1,5 +1,6 @@
 #' fisher_exact_test
 #' one side? two side?
+#' https://www.pathwaycommons.org/guide/primers/statistics/fishers_exact_test/
 #'
 #' This function allows you to compute fish exact pvalue of gene list for selected  pathways
 #'          genes_in_common      genes_in_reference
