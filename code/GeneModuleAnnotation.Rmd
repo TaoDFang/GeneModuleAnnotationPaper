@@ -1,0 +1,105 @@
+---
+title: "GeneModuleAnnotation"
+author: "Tao Fang"
+date: "4/6/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## load necesseary package
+```{r}
+library(devtools)
+library(roxygen2)
+setwd("~/Documents/GeneModuleAnnotationPaper/code")
+library(Matrix)
+#library(GENEMABR)
+```
+## create R pacakge
+```{r}
+#setwd("~/Documents/GeneModuleAnnotationPaper/code/")
+#create("GENEMABR")
+
+## including some data in the package
+## following link in https://bookdown.org/rdpeng/RProgDA/data-within-a-package.html
+## first save it as raw data so users can get access to it
+##then transfer to internal data so package can use it easily 
+human_go_ontology=readRDS(system.file("extdata", "go_ontology.rds", package = "GENEMABR"))
+human_reactome_ontology=readRDS(system.file("extdata", "human_reactome_ontology.rds", package = "GENEMABR"))
+gene_pathway_matrix=readRDS(system.file("extdata", "gene_pathway_matrix.rds", package = "GENEMABR"))
+setwd("~/Documents/GeneModuleAnnotationPaper/code/GENEMABR")
+#use_data(human_go_ontology,human_reactome_ontology,gene_pathway_matrix,internal = T,overwrite = T)
+## then document data  in data.R files
+## for now temporily remove data.R file until finally finishing pacakge 
+
+# steps to procees documentation for the pacakge
+setwd("~/Documents/GeneModuleAnnotationPaper/code/GENEMABR")
+document()
+setwd("~/Documents/GeneModuleAnnotationPaper/code")
+install("GENEMABR")
+library(GENEMABR)
+
+```
+
+
+
+## set data path
+```{r}
+raw_data_path="~/Documents/DreamChallengeModuleAnnotation/HPC_Disease_module_identification_DREAM_change/"
+```
+
+
+# Test function in R package
+
+### test regression_selected_pathways
+```{r}
+gene_input=c("TRPC4AP","CDC37","TNIP1","IKBKB","NKIRAS2","NFKBIA","TIMM50","RELB","TNFAIP3","NFKBIB","HSPA1A","NFKBIE",
+"SPAG9","NFKB2","ERLIN1","REL","TNIP2","TUBB6","MAP3K8")
+```
+
+### test other function
+```{r}
+## before this, we need to store he new dat into package
+################################################
+# human_go_roots=c("GO:0003674","GO:0005575","GO:0008150")
+# human_go_sub_roots=sapply(human_go_roots, function(x){
+#   as_ids(neighbors(human_go_ontology, x, mode = "out"))
+# })
+# human_go_sub_roots=unlist(human_go_sub_roots)
+# saveRDS(human_go_roots,file = paste("/Users/taofang/Documents/GeneModuleAnnotationPaper/code/GENEMABR/inst/extdata/","human_go_roots.rds",sep = ""))
+# saveRDS(human_go_sub_roots,file = paste("/Users/taofang/Documents/GeneModuleAnnotationPaper/code/GENEMABR/inst/extdata/","human_go_sub_roots.rds",sep = ""))
+# 
+# human_reactome_roots=which(sapply(sapply(V(human_reactome_ontology), function(x) neighbors(human_reactome_ontology,x, mode="in")), length) == 0)
+# human_reactome_roots=names(human_reactome_roots)
+# 
+# saveRDS(human_reactome_roots,file = paste("/Users/taofang/Documents/GeneModuleAnnotationPaper/code/GENEMABR/inst/extdata/","human_reactome_roots.rds",sep = ""))
+
+################################################
+
+## if you use the default pathway databases(GO Ontologyand REACTOME).
+## After you extracted enriched pathways, you can use find_root_ids function to find thier GO sub-root or REACTOME roots(ID) to help you better understanding the biological meanings of pathways.
+## Here we use GO sub-root instead of GO root nodes as there are only three roots in the GO ontology and it's not so specific 
+GO_Reactome_root_id=find_root_ids(selected_pathways=c("GO:0005834","R-HSA-111469"))
+
+# Or if you want to obatain root notes names instead of ID, you can use function from_id2name to get names from ids
+GO_Reactome_root_id_names=from_id2name(GO_Reactome_root_id)
+
+# Or you  can use function from_id2name to get names from ids 
+step2root=get_steps(selected_pathways=c("GO:0005834","R-HSA-111469"))
+
+# To view specic position of GO/REACOTEM pathways in ontology trees.
+# You can use Visualization tool at https://www.ebi.ac.uk/QuickGO/ and https://reactome.org/PathwayBrowser/ 
+
+```
+
+
+
+
+
+
+
+
+
+

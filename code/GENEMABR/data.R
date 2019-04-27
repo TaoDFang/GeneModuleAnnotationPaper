@@ -4,10 +4,27 @@
 #'@details  The igraph format tree was constructed by using data from http://geneontology.org/docs/download-ontology/ (May 2108)
 #'It has three root notes representing Molecular Function,Cellular Component and Biological Process (http://geneontology.org/docs/ontology-documentation/)
 #'It was saved as raw data in this package
-#'The path to this data could be list by system.file("extdata", "go_ontology.rds", package = "GENEMABR")
-#'And you can read the data by readRDS(system.file("extdata", "go_ontology.rds", package = "GENEMABR"))
-"human_go_ontology"
+#'The path to this data could be list by system.file("extdata", "human_go_ontology.rds", package = "GENEMABR")
+#'And you can read the data by readRDS(system.file("extdata", "human_go_ontology.rds", package = "GENEMABR"))
+#'"human_go_ontology"
 
+
+#' human_go_root
+#'@description A rds R object contains GO ontology tree root nodes
+#'@format A vector of GO ontology root notes (ID)
+#'@details  You can view tree stuctor of GO ontology at  https://www.ebi.ac.uk/QuickGO/
+#'Thre are three roots notes in GO ontology tree: GO:0008150 (biological_process), GO:0003674(molecular_function), GO:0005575(cellular_component)
+#'The path to this data could be list by system.file("extdata", "human_go_root.rds", package = "GENEMABR")
+#'And you can read the data by readRDS(system.file("extdata", "human_go_root.rds", package = "GENEMABR"))
+#'"human_go_root"
+
+#' human_go_sub_roots
+#'@description A rds R object contains GO ontology tree sub-root nodes (The children of root nodes).
+#'@format A list of three elements contains GO ontology sub-root notes (ID)/the children of three root notes
+#'@details  You can view tree stuctor of GO ontology at  https://www.ebi.ac.uk/QuickGO/
+#'The path to this data could be list by system.file("extdata", "human_go_sub_roots.rds", package = "GENEMABR")
+#'And you can read the data by readRDS(system.file("extdata", "human_go_sub_roots.rds", package = "GENEMABR"))
+#'"human_go_sub_roots"
 
 
 #' Homo sapiens REACTOME ontology tree 
@@ -19,8 +36,16 @@
 #'It was saved as raw data in this package
 #'The path to this data could be list by system.file("extdata", "human_reactome_ontology.rds", package = "GENEMABR")
 #'And you can read the data by readRDS(system.file("extdata", "human_reactome_ontology.rds", package = "GENEMABR"))
-"human_reactome_ontology"
+#'"human_reactome_ontology"
 
+
+#' human_reactome_roots
+#'@description A rds R object contains REACTOME tree root nodes
+#'@format A vector of REACTOME root notes (ID)
+#'@details  You can view tree stuctor of REACTOME at https://reactome.org/PathwayBrowser/
+#'The path to this data could be list by system.file("extdata", "human_reactome_roots.rds", package = "GENEMABR")
+#'And you can read the data by readRDS(system.file("extdata", "human_reactome_roots.rds", package = "GENEMABR"))
+#'"human_reactome_roots"
 
 
 #' Homo sapiens GO ontology and REACTOME ontology gene-pathway realtionship
@@ -28,6 +53,6 @@
 #'@format Formal class 'dgCMatrix' [package "Matrix"] 
 #'A binary matrix whose columns are the pathways/gene sets from GO ontology and REATOME database and 
 #'whose rows are all the genes(represented by gene HUGO gene symbols) from  GO ontology and REATOME database.
-#'For gene i and pathway j, the value of matrix(i,j) is 1 is gene i belonging to pathway j otherwise 0.
-"gene_pathway_matrix"
+#'For gene i and pathway j, the value of matrix(i,j) is 1 is gene i belonging to pathway j otherwise 0
+#'"gene_pathway_matrix"
 
