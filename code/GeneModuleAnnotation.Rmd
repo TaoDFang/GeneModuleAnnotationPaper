@@ -15,7 +15,7 @@ library(devtools)
 library(roxygen2)
 setwd("~/Documents/GeneModuleAnnotationPaper/code")
 library(Matrix)
-#library(GENEMABR)
+library(GENEMABR)
 ```
 ## create R pacakge
 ```{r}
@@ -26,11 +26,13 @@ library(Matrix)
 ## following link in https://bookdown.org/rdpeng/RProgDA/data-within-a-package.html
 ## first save it as raw data so users can get access to it
 ##then transfer to internal data so package can use it easily 
-human_go_ontology=readRDS(system.file("extdata", "go_ontology.rds", package = "GENEMABR"))
+human_go_ontology=readRDS(system.file("data", "human_go_ontology.rds", package = "GENEMABR"))
 human_reactome_ontology=readRDS(system.file("extdata", "human_reactome_ontology.rds", package = "GENEMABR"))
 gene_pathway_matrix=readRDS(system.file("extdata", "gene_pathway_matrix.rds", package = "GENEMABR"))
-setwd("~/Documents/GeneModuleAnnotationPaper/code/GENEMABR")
-#use_data(human_go_ontology,human_reactome_ontology,gene_pathway_matrix,internal = T,overwrite = T)
+human_go_roots=readRDS(system.file("extdata", "human_go_roots.rds", package = "GENEMABR"))
+human_go_sub_roots=readRDS(system.file("extdata", "human_go_sub_roots.rds", package = "GENEMABR"))
+human_reactome_roots=readRDS(system.file("extdata", "human_reactome_roots.rds", package = "GENEMABR"))
+
 ## then document data  in data.R files
 ## for now temporily remove data.R file until finally finishing pacakge 
 

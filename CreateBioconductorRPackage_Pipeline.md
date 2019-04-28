@@ -65,6 +65,11 @@ Raw Data and the inst/extdata/ Directory
 It is often desirable to show a workflow which involves parsing or loading of raw files. Bioconductor recommends finding existing raw data already provided in another package or the hubs, however if this is not applicable, raw data files should be included in the inst/extdata. Files of these type are often accessed utilizing system.file(). Bioconductor requires documentation on these files in an inst/script/ directory.
 
 ## automatically load R package
+add command like this in vignettes
+if(!require(glmnet)){
+    install.packages("glmnet")
+    library(glmnet)
+}
 
 
 ## installation?
@@ -81,4 +86,5 @@ lenrn some formats from: https://github.com/campbio/celda/blob/master/vignettes/
 
 ## documentation
 by roxygen2
-for data?
+http://r-pkgs.had.co.nz/data.html#documenting-data
+for documentation reason, we need to store data in data/ instead of inst/extdata
