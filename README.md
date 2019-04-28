@@ -11,4 +11,6 @@ A R package for this paper can be found at: https://github.com/TaoDFang/GENEMABR
 
 code folder contains all the raw scripts
 
-CreateBioconductorRPackage_Pipeline.md contains steps how I creat R package.
+CreateBioconductorRPackage_Pipeline.md contains steps how I creat R package for github or bioconductor.
+
+GeneModuleAnnotation.Rmd shows how I test the R package

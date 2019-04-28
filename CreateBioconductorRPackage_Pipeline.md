@@ -1,3 +1,4 @@
+学到的重要一课，框架从开始就要搭好，别想着最后再改，真费时间
 # Basically flowing link in Bioconductor website: https://bioconductor.org/developers/package-guidelines/
   http://bioconductor.org/developers/
   https://bioconductor.org/developers/how-to/buildingPackagesForBioc/
@@ -78,13 +79,22 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("scDD", version = "3.9")
 
-also form github?
+also form github
+https://kbroman.org/pkg_primer/pages/github.html https://cran.r-project.org/web/packages/githubinstall/vignettes/githubinstall.html
+
+then install by
+library(devtools)
+install_github("TaoDFang/GENEMABR")
+
 
 
 ## vignettes
-lenrn some formats from: https://github.com/campbio/celda/blob/master/vignettes/DecontX-analysis.Rmd
+learn some formats from: https://github.com/campbio/celda/blob/master/vignettes/DecontX-analysis.Rmd
 
 ## documentation
 by roxygen2
 http://r-pkgs.had.co.nz/data.html#documenting-data
-for documentation reason, we need to store data in data/ instead of inst/extdata
+see GeneModuleAnnotation.Rmd for detail
+
+## .gitignore
+hidden file(check them by ls -a )
