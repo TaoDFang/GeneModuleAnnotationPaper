@@ -1,0 +1,199 @@
+* using log directory ‘/Users/taofang/Documents/GeneModuleAnnotationPaper/github_package/GENEMABR.Rcheck’
+* using R version 3.6.0 (2019-04-26)
+* using platform: x86_64-apple-darwin15.6.0 (64-bit)
+* using session charset: UTF-8
+* checking for file ‘GENEMABR/DESCRIPTION’ ... OK
+* this is package ‘GENEMABR’ version ‘0.99.0’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... OK
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... WARNING
+Found the following file with a non-portable file name:
+  Figures/Figure S5_ Module 283.png
+These are not fully portable file names.
+See section ‘Package structure’ in the ‘Writing R Extensions’ manual.
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘GENEMABR’ can be installed ... OK
+* checking installed package size ... NOTE
+  installed size is  8.9Mb
+  sub-directories of 1Mb or more:
+    data      2.5Mb
+    extdata   6.0Mb
+* checking package directory ... OK
+* checking ‘build’ directory ... OK
+* checking DESCRIPTION meta-information ... OK
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... OK
+* checking R files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking dependencies in R code ... NOTE
+Namespaces in Imports field not imported from:
+  ‘Matrix’ ‘glmnet’ ‘igraph’
+  All declared Imports should be used.
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... NOTE
+find_root_ids : <anonymous>: no visible global function definition for
+  ‘ego’
+find_root_ids : <anonymous>: no visible global function definition for
+  ‘gorder’
+fisher_exact_test: no visible global function definition for
+  ‘fisher.test’
+from_id2name: no visible global function definition for ‘V’
+from_id2name: no visible global function definition for ‘as_ids’
+get_steps : <anonymous>: no visible global function definition for
+  ‘distances’
+regression_selected_pathways: no visible global function definition for
+  ‘glmnet’
+Undefined global functions or variables:
+  V as_ids distances ego fisher.test glmnet gorder
+Consider adding
+  importFrom("stats", "fisher.test")
+to your NAMESPACE file.
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... OK
+* checking for code/documentation mismatches ... WARNING
+Functions or methods with usage in documentation object 'gene_pathway_matrix' but not in code:
+  ‘readRDS’
+
+Functions or methods with usage in documentation object 'human_go_ontology' but not in code:
+  ‘readRDS’
+
+Functions or methods with usage in documentation object 'human_go_roots' but not in code:
+  ‘readRDS’
+
+Functions or methods with usage in documentation object 'human_go_sub_roots' but not in code:
+  ‘readRDS’
+
+Functions or methods with usage in documentation object 'human_reactome_ontology' but not in code:
+  ‘readRDS’
+
+Functions or methods with usage in documentation object 'human_reactome_roots' but not in code:
+  ‘readRDS’
+
+* checking Rd \usage sections ... WARNING
+Undocumented arguments in documentation object 'gene_pathway_matrix'
+  ‘system.file("extdata", "gene_pathway_matrix.rds", package =
+  "GENEMABR")’
+Objects in \usage without \alias in documentation object 'gene_pathway_matrix':
+  ‘readRDS’
+
+Undocumented arguments in documentation object 'human_go_ontology'
+  ‘system.file("extdata", "human_go_ontology.rds", package =
+  "GENEMABR")’
+Objects in \usage without \alias in documentation object 'human_go_ontology':
+  ‘readRDS’
+
+Undocumented arguments in documentation object 'human_go_roots'
+  ‘system.file("extdata", "human_go_roots.rds", package = "GENEMABR")’
+Objects in \usage without \alias in documentation object 'human_go_roots':
+  ‘readRDS’
+
+Undocumented arguments in documentation object 'human_go_sub_roots'
+  ‘system.file("extdata", "human_go_sub_roots.rds", package =
+  "GENEMABR")’
+Objects in \usage without \alias in documentation object 'human_go_sub_roots':
+  ‘readRDS’
+
+Undocumented arguments in documentation object 'human_reactome_ontology'
+  ‘system.file("extdata", "human_reactome_ontology.rds", package =
+  "GENEMABR")’
+Objects in \usage without \alias in documentation object 'human_reactome_ontology':
+  ‘readRDS’
+
+Undocumented arguments in documentation object 'human_reactome_roots'
+  ‘system.file("extdata", "human_reactome_roots.rds", package =
+  "GENEMABR")’
+Objects in \usage without \alias in documentation object 'human_reactome_roots':
+  ‘readRDS’
+
+Functions with \usage entries need to have the appropriate \alias
+entries, and all their arguments documented.
+The \usage entries must correspond to syntactically valid R code.
+See chapter ‘Writing R documentation files’ in the ‘Writing R
+Extensions’ manual.
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking contents of ‘data’ directory ... OK
+* checking data for non-ASCII characters ... WARNING
+  Warning: found non-ASCII string
+  'Biosynthesis of electrophilic <cf><89>-3 PUFA oxo-derivatives' in object 'human_reactome_ontology'
+* checking data for ASCII and uncompressed saves ... OK
+* checking sizes of PDF files under ‘inst/doc’ ... OK
+* checking installed files from ‘inst/doc’ ... OK
+* checking files in ‘vignettes’ ... OK
+* checking examples ... ERROR
+Running examples in ‘GENEMABR-Ex.R’ failed
+The error most likely occurred in:
+
+> ### Name: find_root_ids
+> ### Title: find_root_ids
+> ### Aliases: find_root_ids
+> 
+> ### ** Examples
+> 
+> find_root_ids(selected_pathways=c("GO:0005834","R-HSA-111469"))
+Error in ego(go_ontology, order = gorder(go_ontology), x, mode = "in") : 
+  could not find function "ego"
+Calls: find_root_ids -> lapply -> FUN
+Execution halted
+* checking for unstated dependencies in vignettes ... OK
+* checking package vignettes in ‘inst/doc’ ... OK
+* checking running R code from vignettes ... NONE
+* checking re-building of vignette outputs ... OK
+* checking PDF version of manual ... WARNING
+LaTeX errors when creating PDF version.
+This typically indicates Rd problems.
+LaTeX errors found:
+! Package inputenc Error: Unicode character ≤ (U+2264)
+(inputenc)                not set up for use with LaTeX.
+
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+! Package inputenc Error: Unicode character α (U+03B1)
+(inputenc)                not set up for use with LaTeX.
+
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+! Package inputenc Error: Unicode character ≤ (U+2264)
+(inputenc)                not set up for use with LaTeX.
+
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+! Package inputenc Error: Unicode character α (U+03B1)
+(inputenc)                not set up for use with LaTeX.
+
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+! Package inputenc Error: Unicode character β (U+03B2)
+(inputenc)                not set up for use with LaTeX.
+
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+! Package inputenc Error: Unicode character α (U+03B1)
+(inputenc)                not set up for use with LaTeX.
+
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+! Package inputenc Error: Unicode character β (U+03B2)
+(inputenc)                not set up for use with LaTeX.
+
+See the inputenc package documentation for explanation.
+Type  H <return>  for immediate help.
+* checking PDF version of manual without hyperrefs or index ... ERROR
+* DONE
+Status: 2 ERRORs, 5 WARNINGs, 3 NOTEs

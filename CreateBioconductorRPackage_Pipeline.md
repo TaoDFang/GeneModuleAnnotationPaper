@@ -90,6 +90,16 @@ install_github("TaoDFang/GENEMABR")
 
 ## vignettes
 learn some formats from: https://github.com/campbio/celda/blob/master/vignettes/DecontX-analysis.Rmd
+Better to generate pdf format file, its easier to be distributed.
+Need to isnatll Tex tool tinytex::install_tinytex() or http://www.tug.org/mactex/
+
+remember to add  VignetteEngine https://www.bioconductor.org/packages/devel/bioc/vignettes/BiocStyle/inst/doc/AuthoringRmdVignettes.html
+
+## coding style
+https://bioconductor.org/developers/how-to/coding-style/
+
+## use external package
+https://kbroman.org/pkg_primer/pages/depends.html
 
 ## documentation
 by roxygen2
@@ -98,3 +108,28 @@ see GeneModuleAnnotation.Rmd for detail
 
 ## .gitignore
 hidden file(check them by ls -a )
+
+## News
+
+## CITATION
+to be done
+
+## register in support site
+"Maintainer must register at the support site; visit https://support.bioconductor.org/accounts/signup/ ."   
+
+## R CMD check environment
+http://bioconductor.org/developers/how-to/buildingPackagesForBioc/
+
+In linux/macOS commond line (go to folder /Users/taofang/Documents/GeneModuleAnnotationPaper/github_package):
+R CMD build GENEMABR
+
+R CMD check GENEMABR_0.99.0.tar.gz
+
+
+In R:
+library(BiocCheck)
+pathToPkg <- file.path("/Users/taofang/Documents/GeneModuleAnnotationPaper/github_package/","GENEMABR")
+BiocCheck(pathToPkg)
+
+##  submission
+https://bioconductor.org/developers/package-submission/
