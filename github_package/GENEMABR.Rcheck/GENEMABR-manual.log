@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.4.28)  28 APR 2019 23:58
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.4.28)  29 APR 2019 21:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -654,7 +654,7 @@ ibrary/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></Users/tao
 fang/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Use
 rs/taofang/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb
 >
-Output written on Rd2.pdf (9 pages, 163582 bytes).
+Output written on Rd2.pdf (9 pages, 163430 bytes).
 PDF statistics:
  263 PDF objects out of 1000 (max. 8388607)
  237 compressed objects within 3 object streams

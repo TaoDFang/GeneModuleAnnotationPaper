@@ -37,31 +37,11 @@ See section ‘Package structure’ in the ‘Writing R Extensions’ manual.
 * checking whether the package can be unloaded cleanly ... OK
 * checking whether the namespace can be loaded with stated dependencies ... OK
 * checking whether the namespace can be unloaded cleanly ... OK
-* checking dependencies in R code ... NOTE
-Namespaces in Imports field not imported from:
-  ‘Matrix’ ‘glmnet’ ‘igraph’
-  All declared Imports should be used.
+* checking dependencies in R code ... OK
 * checking S3 generic/method consistency ... OK
 * checking replacement functions ... OK
 * checking foreign function calls ... OK
-* checking R code for possible problems ... NOTE
-find_root_ids : <anonymous>: no visible global function definition for
-  ‘ego’
-find_root_ids : <anonymous>: no visible global function definition for
-  ‘gorder’
-fisher_exact_test: no visible global function definition for
-  ‘fisher.test’
-from_id2name: no visible global function definition for ‘V’
-from_id2name: no visible global function definition for ‘as_ids’
-get_steps : <anonymous>: no visible global function definition for
-  ‘distances’
-regression_selected_pathways: no visible global function definition for
-  ‘glmnet’
-Undefined global functions or variables:
-  V as_ids distances ego fisher.test glmnet gorder
-Consider adding
-  importFrom("stats", "fisher.test")
-to your NAMESPACE file.
+* checking R code for possible problems ... OK
 * checking Rd files ... OK
 * checking Rd metadata ... OK
 * checking Rd cross-references ... OK
@@ -136,21 +116,10 @@ Extensions’ manual.
 * checking sizes of PDF files under ‘inst/doc’ ... OK
 * checking installed files from ‘inst/doc’ ... OK
 * checking files in ‘vignettes’ ... OK
-* checking examples ... ERROR
-Running examples in ‘GENEMABR-Ex.R’ failed
-The error most likely occurred in:
-
-> ### Name: find_root_ids
-> ### Title: find_root_ids
-> ### Aliases: find_root_ids
-> 
-> ### ** Examples
-> 
-> find_root_ids(selected_pathways=c("GO:0005834","R-HSA-111469"))
-Error in ego(go_ontology, order = gorder(go_ontology), x, mode = "in") : 
-  could not find function "ego"
-Calls: find_root_ids -> lapply -> FUN
-Execution halted
+* checking examples ... OK
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘testthat.R’
 * checking for unstated dependencies in vignettes ... OK
 * checking package vignettes in ‘inst/doc’ ... OK
 * checking running R code from vignettes ... NONE
@@ -196,4 +165,4 @@ See the inputenc package documentation for explanation.
 Type  H <return>  for immediate help.
 * checking PDF version of manual without hyperrefs or index ... ERROR
 * DONE
-Status: 2 ERRORs, 5 WARNINGs, 3 NOTEs
+Status: 1 ERROR, 5 WARNINGs, 1 NOTE

@@ -27,7 +27,7 @@
 \item[LazyData]\AsIs{false}
 \item[Encoding]\AsIs{UTF-8}
 \item[VignetteBuilder]\AsIs{knitr}
-\item[Suggests]\AsIs{BiocStyle, knitr, rmarkdown}
+\item[Suggests]\AsIs{BiocStyle, knitr, rmarkdown, testthat (>= 2.1.0)}
 \item[RoxygenNote]\AsIs{6.1.1}
 \item[NeedsCompilation]\AsIs{no}
 \end{description}
@@ -53,7 +53,7 @@ find_root_ids(selected_pathways)
 \end{Arguments}
 %
 \begin{Value}
-A list of GO sub-root or REACTOME root ids for provided pathways. 
+A list of GO sub-root or REACTOME root ids for provided pathways.
 If a certain pathway has morn than one GO sub-roots or REACTOME roots, they will be seperated by "\#".
 \end{Value}
 %
@@ -83,7 +83,7 @@ fisher_exact_test(selected_pathways, gene_input,
 
 \item[\code{gene\_input}] A vecor of genes to be annotated. It should have same ID types(E.g. Ensembl ID, HUGO gene symbol) as the genes in \emph{gene\_pathway\_matrix}.
 
-\item[\code{gene\_pathway\_matrix}] A binary background matrix whose columns are the pathways/gene sets and 
+\item[\code{gene\_pathway\_matrix}] A binary background matrix whose columns are the pathways/gene sets and
 whose rows are all the genes from pathways/gene sets . It could be in sparse matrix format ((inherit from class "sparseMatrix" as in package Matrix) to save memory.
 For gene i and pathway j, the value of matrix(i,j) is 1 is gene i belonging to pathway j otherwise 0.
 Users could leave it as default value("default") so it will use pre-collected gene\_pathway\_matrix from GO Ontology and REACTOME databaase.
@@ -92,7 +92,7 @@ Otherwise, they could use their own customized gene\_pathway\_matrix
 \end{Arguments}
 %
 \begin{Value}
-A list of two elements: 
+A list of two elements:
 \begin{itemize}
 
 \item selected\_pathways\_fisher\_pvalue - Fisher exact pvalue for selected pathways

@@ -91,20 +91,33 @@ install_github("TaoDFang/GENEMABR")
 ## vignettes
 learn some formats from: https://github.com/campbio/celda/blob/master/vignettes/DecontX-analysis.Rmd
 Better to generate pdf format file, its easier to be distributed.
-Need to isnatll Tex tool tinytex::install_tinytex() or http://www.tug.org/mactex/
+<!-- Need to isnatll Tex tool tinytex::install_tinytex() or http://www.tug.org/mactex/ -->
 
 remember to add  VignetteEngine https://www.bioconductor.org/packages/devel/bioc/vignettes/BiocStyle/inst/doc/AuthoringRmdVignettes.html
+latex_engine options: pdflatex, xelatex and lualatex,
+at first lualatex only works for macos while pdflatex and xelatex failed after only install basic mactex.
+But lualatex cause some errors in R CMD check process.
+So maybe better to install full version MacTex and  use pdflatex engine 
 
 ## coding style
 https://bioconductor.org/developers/how-to/coding-style/
 
 ## use external package
-https://kbroman.org/pkg_primer/pages/depends.html
+https://kbroman.org/pkg_primer/pages/depends.html  , http://r-pkgs.had.co.nz/namespace.html
+
+things to be noticed here, to use other package, we need to add some thing in DESCRIPTION and NAMESPACE
+file. While roxygen2 document() function will remove this automatically. So remember to add this thing after build
+funtion. In this pacakge, we used add:
+
+import(glmnet)
+import(igraph)
+import(Matrix)
 
 ## documentation
 by roxygen2
 http://r-pkgs.had.co.nz/data.html#documenting-data
 see GeneModuleAnnotation.Rmd for detail
+
 
 ## .gitignore
 hidden file(check them by ls -a )
@@ -115,7 +128,19 @@ hidden file(check them by ls -a )
 to be done
 
 ## register in support site
-"Maintainer must register at the support site; visit https://support.bioconductor.org/accounts/signup/ ."   
+"Maintainer must register at the support site; visit https://support.bioconductor.org/accounts/signup/ ."
+
+## unit test
+http://bioconductor.org/developers/how-to/unitTesting-guidelines/
+use testthat package http://r-pkgs.had.co.nz/tests.html
+
+library(testthat)
+library(GENEMABR)
+
+
+
+
+
 
 ## R CMD check environment
 http://bioconductor.org/developers/how-to/buildingPackagesForBioc/
@@ -131,5 +156,20 @@ library(BiocCheck)
 pathToPkg <- file.path("/Users/taofang/Documents/GeneModuleAnnotationPaper/github_package/","GENEMABR")
 BiocCheck(pathToPkg)
 
+pass with information:
+$error
+character(0)
+
+$warning
+character(0)
+
+$note
+[1] "Potential intermediate files found:"                                                                                                                                             
+[2] "Consider shorter lines; 140 lines (19%) are > 80 characters long."                                                                                                               
+[3] "Consider multiples of 4 spaces for line indents, 90 lines(12%) are not."                                                                                                         
+[4] "Cannot determine whether maintainer is subscribed to the bioc-devel mailing list (requires admin credentials).\nSubscribe here: https://stat.ethz.ch/mailman/listinfo/bioc-devel"
+
 ##  submission
 https://bioconductor.org/developers/package-submission/
+
+## keep tring and debuging until finished in the end

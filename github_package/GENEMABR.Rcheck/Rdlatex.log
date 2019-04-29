@@ -173,7 +173,7 @@ nts/cm/cmss12.pfb></Users/taofang/Library/TinyTeX/texmf-dist/fonts/type1/public
 /amsfonts/cm/cmti10.pfb></Users/taofang/Library/TinyTeX/texmf-dist/fonts/type1/
 public/amsfonts/cm/cmtt10.pfb></Users/taofang/Library/TinyTeX/texmf-dist/fonts/
 type1/public/amsfonts/cm/cmtt9.pfb>
-Output written on Rd2.pdf (7 pages, 157039 bytes).
+Output written on Rd2.pdf (7 pages, 156885 bytes).
 Transcript written on Rd2.log.
 Error in texi2dvi(file = file, pdf = TRUE, clean = clean, quiet = quiet,  : 
   kann pdflatex nicht auf 'Rd2.tex' ausführen
@@ -350,9 +350,9 @@ nts/cm/cmss12.pfb></Users/taofang/Library/TinyTeX/texmf-dist/fonts/type1/public
 /amsfonts/cm/cmti10.pfb></Users/taofang/Library/TinyTeX/texmf-dist/fonts/type1/
 public/amsfonts/cm/cmtt10.pfb></Users/taofang/Library/TinyTeX/texmf-dist/fonts/
 type1/public/amsfonts/cm/cmtt9.pfb>
-Output written on Rd2.pdf (8 pages, 158076 bytes).
+Output written on Rd2.pdf (8 pages, 157917 bytes).
 Transcript written on Rd2.log.
 Error in texi2dvi(file = file, pdf = TRUE, clean = clean, quiet = quiet,  : 
   kann pdflatex nicht auf 'Rd2.tex' ausführen
 Fehler bei der Ausführung von tools::texi2pdf()
-You may want to clean up by 'rm -Rf /var/folders/75/4xflzt4x1lg02s_1z8cw0s8c0000gn/T//Rtmp16JScs/Rd2pdf784662f51198'
+You may want to clean up by 'rm -Rf /var/folders/75/4xflzt4x1lg02s_1z8cw0s8c0000gn/T//RtmpZBS9i8/Rd2pdf3f721db879b5'
