@@ -1,11 +1,11 @@
 Package: GENEMABR
 Title: Gene module/list annotation
-Version: 0.99.0
-Author: Tao Fang, Daniel Marbach, Zhang, Jitao David
+Version: 0.99.13
+Author: Tao Fang and Jitao David Zhang, with inputs from Daniel Marbach
 Maintainer: Tao Fang <talonvonfang@gmail.com>
 Description: Gene-set module annotation or gene-set enrichment within a regression based framework.
-Imports: glmnet, igraph, Matrix,
-Depends: R (>= 3.6)
+Imports: glmnet, igraph, Matrix
+Depends: R (>= 3.5.0)
 biocViews: GeneSetEnrichment,Regression,Pathways,GO, Reactome
 License: Artistic-2.0
 BugReports: https://github.com/TaoDFang/GENEMABR/issues
@@ -14,6 +14,16 @@ Encoding: UTF-8
 VignetteBuilder: knitr
 Suggests: BiocStyle, knitr, rmarkdown, testthat (>= 2.1.0)
 RoxygenNote: 6.1.1
+RemoteType: github
+RemoteHost: api.github.com
+RemoteRepo: GENEMABR
+RemoteUsername: TaoDFang
+RemoteRef: master
+RemoteSha: b974751ab7f56f8095b0d2455dd65f0cd299567b
+GithubRepo: GENEMABR
+GithubUsername: TaoDFang
+GithubRef: master
+GithubSHA1: b974751ab7f56f8095b0d2455dd65f0cd299567b
 NeedsCompilation: no
-Packaged: 2019-04-29 20:49:36 UTC; taofang
-Built: R 3.6.0; ; 2019-04-29 20:50:13 UTC; unix
+Packaged: 2019-05-23 09:15:29 UTC; taofang
+Built: R 3.6.0; ; 2019-05-23 09:15:30 UTC; unix

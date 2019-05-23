@@ -8,4 +8,5 @@ human_go_roots	human_go_roots
 human_go_sub_roots	human_go_sub_roots
 human_reactome_ontology	human_reactome_ontology
 human_reactome_roots	human_reactome_roots
+mydata	mydata
 regression_selected_pathways	regression_selected_pathways

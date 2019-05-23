@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.4.28)  29 APR 2019 21:51
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.4.29)  23 MAY 2019 10:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -451,194 +451,70 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <7> on input line 26.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 26.
-(./Rd2.toc)
+(./Rd2.toc [1
+
+
+{/Users/taofang/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}])
 \tf@toc=\write5
 \openout5 = `Rd2.toc'.
 
- [1
-
-
-{/Users/taofang/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    Font shape `OT1/zi4/m/n' will be
-(Font)              scaled to size 9.0pt on input line 61.
-
-Overfull \hbox (3.74292pt too wide) in paragraph at lines 82--83
+(Font)              scaled to size 9.0pt on input line 71.
+ [2]
+Overfull \hbox (3.74292pt too wide) in paragraph at lines 92--93
 \OT1/cmr/m/it/10 gene[]input\OT1/cmr/m/n/10 .It should have same ID types(E.g. 
 path-way ID, path-way names)
  []
 
-[2]
-Overfull \hbox (833.28088pt too wide) in paragraph at lines 107--107
- []\OT1/zi4/m/n/9 a=fisher_exact_test(selected_pathways=c("GO:0007250","GO:0008
-625"),gene_input=c("TRPC4AP","CDC37","TNIP1","IKBKB","NKIRAS2","NFKBIA","TIMM50
-","RELB","TNFAIP3","NFKBIB","HSPA1A","NFKBIE","SPAG9","NFKB2","ERLIN1","REL","T
-NIP2","TUBB6","MAP3K8"),gene_pathway_matrix="default")[] 
- []
-
-
-Overfull \hbox (23.28088pt too wide) in paragraph at lines 135--135
+[3]
+Overfull \hbox (23.28088pt too wide) in paragraph at lines 148--148
  []\OT1/zi4/m/n/9 from_id2name((selected_pathways=list(c("GO:0032991#GO:0044425
 #GO:0044464"),"R-HSA-5357801")))[] 
  []
 
-[3]
-Overfull \hbox (0.47627pt too wide) in paragraph at lines 157--161
+
+Overfull \hbox (0.47627pt too wide) in paragraph at lines 170--174
 []\OT1/cmr/m/n/10 http://geneontology.org/docs/download-ontology/, https://reac
 tome.org/download-data A
  []
 
 [4]
-Overfull \hbox (35.44841pt too wide) in paragraph at lines 209--211
+Overfull \hbox (35.44841pt too wide) in paragraph at lines 222--224
 []\OT1/cmr/m/n/10 The igraph for-mat tree was con-structed by us-ing data from 
 http://geneontology.org/docs/download-
  []
 
-
-Overfull \hbox (60.27242pt too wide) in paragraph at lines 235--237
+[5]
+Overfull \hbox (60.27242pt too wide) in paragraph at lines 248--250
 \OT1/cmr/m/n/10 three roots notes in GO on-tol-ogy tree: GO:0008150 (bi-o-log-i
 -cal[]process), GO:0003674(molecular[]function),
  []
 
-[5]
-Overfull \hbox (18.10059pt too wide) in paragraph at lines 277--277
- []\OT1/zi4/m/n/10 readRDS(system.file("extdata", "human_reactome_ontology.rds"
-, package = "GENEMABR"))[] 
- []
-
-[6]
-Overfull \hbox (3.10059pt too wide) in paragraph at lines 303--303
- []\OT1/zi4/m/n/10 readRDS(system.file("extdata", "human_reactome_roots.rds", p
-ackage = "GENEMABR"))[] 
- []
-
-[7]
-
-! Package inputenc Error: Unicode character ≤ (U+2264)
-(inputenc)                not set up for use with LaTeX.
-
-See the inputenc package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.345 ...he elasticnet mixing parameter, with 0≤
-                                                  α≤ 1. The penalty is de...
-
-You may provide a definition with
-\DeclareUnicodeCharacter 
-
-
-! Package inputenc Error: Unicode character α (U+03B1)
-(inputenc)                not set up for use with LaTeX.
-
-See the inputenc package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.345 ... elasticnet mixing parameter, with 0≤α
-                                                  ≤ 1. The penalty is defi...
-
-You may provide a definition with
-\DeclareUnicodeCharacter 
-
-
-! Package inputenc Error: Unicode character ≤ (U+2264)
-(inputenc)                not set up for use with LaTeX.
-
-See the inputenc package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.345 ...asticnet mixing parameter, with 0≤α≤
-                                                   1. The penalty is defined as
-
-You may provide a definition with
-\DeclareUnicodeCharacter 
-
-
-! Package inputenc Error: Unicode character α (U+03B1)
-(inputenc)                not set up for use with LaTeX.
-
-See the inputenc package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.346 (1-α
-           )/2||β||\_2\textasciicircum{}2+α||β||\_1.
-You may provide a definition with
-\DeclareUnicodeCharacter 
-
-
-! Package inputenc Error: Unicode character β (U+03B2)
-(inputenc)                not set up for use with LaTeX.
-
-See the inputenc package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.346 (1-α)/2||β
-                  ||\_2\textasciicircum{}2+α||β||\_1.
-You may provide a definition with
-\DeclareUnicodeCharacter 
-
-
-! Package inputenc Error: Unicode character α (U+03B1)
-(inputenc)                not set up for use with LaTeX.
-
-See the inputenc package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.346 (1-α)/2||β||\_2\textasciicircum{}2+α
-                                             ||β||\_1.
-You may provide a definition with
-\DeclareUnicodeCharacter 
-
-
-! Package inputenc Error: Unicode character β (U+03B2)
-(inputenc)                not set up for use with LaTeX.
-
-See the inputenc package documentation for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.346 (1-α)/2||β||\_2\textasciicircum{}2+α||β
-                                                 ||\_1.
-You may provide a definition with
-\DeclareUnicodeCharacter 
-
-
-Overfull \hbox (804.77782pt too wide) in paragraph at lines 368--368
- []\OT1/zi4/m/n/9 a=regression_selected_pathways(gene_input =c("TRPC4AP","CDC37
-","TNIP1","IKBKB","NKIRAS2","NFKBIA","TIMM50","RELB","TNFAIP3","NFKBIB","HSPA1A
-","NFKBIE","SPAG9","NFKB2","ERLIN1","REL","TNIP2","TUBB6","MAP3K8"),gene_pathwa
-y_matrix="default",lambda=0.007956622,alpha=0.5)[] 
- []
-
-(./Rd2.ind [8] [9
+[6] [7] [8] (./Rd2.ind [9] [10
 
 
 ])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 372.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 372.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 414.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 414.
  (./Rd2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 372.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 372.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 414.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 414.
 Package rerunfilecheck Info: File `Rd2.out' has not changed.
-(rerunfilecheck)             Checksum: 908364EE79BBAC7D801DC8E7F88E5240;920.
+(rerunfilecheck)             Checksum: 0F224C7BBE520C8D8B79C62E3DB2C602;965.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 372.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 414.
  ) 
 Here is how much of TeX's memory you used:
- 5783 strings out of 494562
- 86174 string characters out of 6174329
- 171111 words of memory out of 5000000
- 9293 multiletter control sequences out of 15000+600000
+ 5786 strings out of 494562
+ 86212 string characters out of 6174329
+ 172111 words of memory out of 5000000
+ 9289 multiletter control sequences out of 15000+600000
  10874 words of font info for 38 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 38i,6n,36p,292b,558s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,6n,36p,267b,558s stack positions out of 5000i,500n,10000p,200000b,80000s
  </Users/taofang/.TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600p
 k>{/Users/taofang/Library/TinyTeX/texmf-dist/fonts/enc/dvips/inconsolata/i4-ot1
 -0.enc}</Users/taofang/Library/TinyTeX/texmf-dist/fonts/type1/public/inconsolat
@@ -649,15 +525,16 @@ nts/type1/public/amsfonts/cm/cmbx12.pfb></Users/taofang/Library/TinyTeX/texmf-d
 ist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></Users/taofang/Library/TinyTeX/t
 exmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></Users/taofang/Library/Tiny
 TeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></Users/taofang/Library
-/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl10.pfb></Users/taofang/L
-ibrary/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></Users/tao
-fang/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Use
-rs/taofang/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb
->
-Output written on Rd2.pdf (9 pages, 163430 bytes).
+/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></Users/taofang/Lib
+rary/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl10.pfb></Users/taofa
+ng/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></Users
+/taofang/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><
+/Users/taofang/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10
+.pfb>
+Output written on Rd2.pdf (10 pages, 174428 bytes).
 PDF statistics:
- 263 PDF objects out of 1000 (max. 8388607)
- 237 compressed objects within 3 object streams
- 89 named destinations out of 1000 (max. 500000)
- 97 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 283 PDF objects out of 1000 (max. 8388607)
+ 255 compressed objects within 3 object streams
+ 96 named destinations out of 1000 (max. 500000)
+ 105 words of extra memory for PDF output out of 10000 (max. 10000000)
 

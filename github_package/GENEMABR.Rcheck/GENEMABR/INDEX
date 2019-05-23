@@ -10,5 +10,6 @@ human_go_sub_roots      human_go_sub_roots
 human_reactome_ontology
                         Homo sapiens REACTOME ontology tree
 human_reactome_roots    human_reactome_roots
+mydata                  Helper function to load file
 regression_selected_pathways
                         regression_selected_pathways
