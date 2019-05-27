@@ -63,29 +63,25 @@ LaTeX Font Warning: Font shape `OML/zi4/m/n' undefined
 (Font)              for symbol `textless' on input line 20.
 
 [1{/Users/taofang/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
-]
-Overfull \hbox (3.74292pt too wide) in paragraph at lines 92--93
-\OT1/cmr/m/it/10 gene[]input\OT1/cmr/m/n/10 .It should have same ID types(E.g. 
-path-way ID, path-way names)
-[2]
-Overfull \hbox (23.28088pt too wide) in paragraph at lines 148--148
+] [2]
+Overfull \hbox (23.28088pt too wide) in paragraph at lines 146--146
  []\OT1/zi4/m/n/9 from_id2name((selected_pathways=list(c("GO:0032991#GO:0044425
 #GO:0044464"),"R-HSA-5357801")))[] 
-[3]
-Overfull \hbox (0.47627pt too wide) in paragraph at lines 170--174
+
+Overfull \hbox (0.47627pt too wide) in paragraph at lines 168--172
 []\OT1/cmr/m/n/10 http://geneontology.org/docs/download-ontology/, https://reac
 tome.org/download-data A
-[4]
-Overfull \hbox (35.44841pt too wide) in paragraph at lines 222--224
+[3]
+Overfull \hbox (35.44841pt too wide) in paragraph at lines 221--223
 []\OT1/cmr/m/n/10 The igraph for-mat tree was con-structed by us-ing data from 
 http://geneontology.org/docs/download-
-
-Overfull \hbox (60.27242pt too wide) in paragraph at lines 248--250
+[4]
+Overfull \hbox (60.27242pt too wide) in paragraph at lines 247--249
 \OT1/cmr/m/n/10 three roots notes in GO on-tol-ogy tree: GO:0008150 (bi-o-log-i
 -cal[]process), GO:0003674(molecular[]function),
-[5] [6] [7] [8]
+[5] [6] [7]
 No file Rd2.ind.
-[9] (./Rd2.aux)
+[8] (./Rd2.aux)
 
 Package rerunfilecheck Warning: File `Rd2.out' has changed.
 (rerunfilecheck)                Rerun to get outlines right
@@ -111,7 +107,7 @@ e1/public/amsfonts/cm/cmr7.pfb></Users/taofang/Library/TinyTeX/texmf-dist/fonts
 /fonts/type1/public/amsfonts/cm/cmss12.pfb></Users/taofang/Library/TinyTeX/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/taofang/Library/TinyTe
 X/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on Rd2.pdf (9 pages, 169557 bytes).
+Output written on Rd2.pdf (8 pages, 167902 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2018] (kpathsea + Thai support).
 Scanning input file Rd2.idx....done (18 entries accepted, 0 rejected).
@@ -180,28 +176,24 @@ LaTeX Font Warning: Font shape `OML/zi4/m/n' undefined
 (Font)              using `OML/cmm/m/it' instead
 (Font)              for symbol `textless' on input line 20.
 
-(./Rd2.toc [1{/Users/taofang/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/
-pdftex.map}]) [2]
-Overfull \hbox (3.74292pt too wide) in paragraph at lines 92--93
-\OT1/cmr/m/it/10 gene[]input\OT1/cmr/m/n/10 .It should have same ID types(E.g. 
-path-way ID, path-way names)
-[3]
-Overfull \hbox (23.28088pt too wide) in paragraph at lines 148--148
+(./Rd2.toc) [1{/Users/taofang/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap
+/pdftex.map}] [2]
+Overfull \hbox (23.28088pt too wide) in paragraph at lines 146--146
  []\OT1/zi4/m/n/9 from_id2name((selected_pathways=list(c("GO:0032991#GO:0044425
 #GO:0044464"),"R-HSA-5357801")))[] 
-
-Overfull \hbox (0.47627pt too wide) in paragraph at lines 170--174
+[3]
+Overfull \hbox (0.47627pt too wide) in paragraph at lines 168--172
 []\OT1/cmr/m/n/10 http://geneontology.org/docs/download-ontology/, https://reac
 tome.org/download-data A
 [4]
-Overfull \hbox (35.44841pt too wide) in paragraph at lines 222--224
+Overfull \hbox (35.44841pt too wide) in paragraph at lines 221--223
 []\OT1/cmr/m/n/10 The igraph for-mat tree was con-structed by us-ing data from 
 http://geneontology.org/docs/download-
-[5]
-Overfull \hbox (60.27242pt too wide) in paragraph at lines 248--250
+
+Overfull \hbox (60.27242pt too wide) in paragraph at lines 247--249
 \OT1/cmr/m/n/10 three roots notes in GO on-tol-ogy tree: GO:0008150 (bi-o-log-i
 -cal[]process), GO:0003674(molecular[]function),
-[6] [7] [8] (./Rd2.ind [9] [10]) (./Rd2.aux)
+[5] [6] [7] [8] (./Rd2.ind [9] [10]) (./Rd2.aux)
 
 Package rerunfilecheck Warning: File `Rd2.out' has changed.
 (rerunfilecheck)                Rerun to get outlines right
@@ -227,7 +219,7 @@ e1/public/amsfonts/cm/cmr7.pfb></Users/taofang/Library/TinyTeX/texmf-dist/fonts
 /fonts/type1/public/amsfonts/cm/cmss12.pfb></Users/taofang/Library/TinyTeX/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/taofang/Library/TinyTe
 X/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on Rd2.pdf (10 pages, 174042 bytes).
+Output written on Rd2.pdf (10 pages, 172893 bytes).
 Transcript written on Rd2.log.
 This is makeindex, version 2.15 [TeX Live 2018] (kpathsea + Thai support).
 Scanning input file Rd2.idx....done (18 entries accepted, 0 rejected).
@@ -296,28 +288,24 @@ LaTeX Font Warning: Font shape `OML/zi4/m/n' undefined
 (Font)              using `OML/cmm/m/it' instead
 (Font)              for symbol `textless' on input line 20.
 
-(./Rd2.toc [1{/Users/taofang/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/
-pdftex.map}]) [2]
-Overfull \hbox (3.74292pt too wide) in paragraph at lines 92--93
-\OT1/cmr/m/it/10 gene[]input\OT1/cmr/m/n/10 .It should have same ID types(E.g. 
-path-way ID, path-way names)
-[3]
-Overfull \hbox (23.28088pt too wide) in paragraph at lines 148--148
+(./Rd2.toc) [1{/Users/taofang/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap
+/pdftex.map}] [2]
+Overfull \hbox (23.28088pt too wide) in paragraph at lines 146--146
  []\OT1/zi4/m/n/9 from_id2name((selected_pathways=list(c("GO:0032991#GO:0044425
 #GO:0044464"),"R-HSA-5357801")))[] 
-
-Overfull \hbox (0.47627pt too wide) in paragraph at lines 170--174
+[3]
+Overfull \hbox (0.47627pt too wide) in paragraph at lines 168--172
 []\OT1/cmr/m/n/10 http://geneontology.org/docs/download-ontology/, https://reac
 tome.org/download-data A
 [4]
-Overfull \hbox (35.44841pt too wide) in paragraph at lines 222--224
+Overfull \hbox (35.44841pt too wide) in paragraph at lines 221--223
 []\OT1/cmr/m/n/10 The igraph for-mat tree was con-structed by us-ing data from 
 http://geneontology.org/docs/download-
-[5]
-Overfull \hbox (60.27242pt too wide) in paragraph at lines 248--250
+
+Overfull \hbox (60.27242pt too wide) in paragraph at lines 247--249
 \OT1/cmr/m/n/10 three roots notes in GO on-tol-ogy tree: GO:0008150 (bi-o-log-i
 -cal[]process), GO:0003674(molecular[]function),
-[6] [7] [8] (./Rd2.ind [9] [10]) (./Rd2.aux)
+[5] [6] [7] [8] (./Rd2.ind [9] [10]) (./Rd2.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
@@ -338,8 +326,8 @@ e1/public/amsfonts/cm/cmr7.pfb></Users/taofang/Library/TinyTeX/texmf-dist/fonts
 /fonts/type1/public/amsfonts/cm/cmss12.pfb></Users/taofang/Library/TinyTeX/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/taofang/Library/TinyTe
 X/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on Rd2.pdf (10 pages, 174428 bytes).
+Output written on Rd2.pdf (10 pages, 173408 bytes).
 Transcript written on Rd2.log.
 Saving output to ‘GENEMABR-manual.pdf’ ...
 Done
-You may want to clean up by 'rm -Rf /var/folders/75/4xflzt4x1lg02s_1z8cw0s8c0000gn/T//RtmpHcTW1U/Rd2pdf59e01a9384a3'
+You may want to clean up by 'rm -Rf /var/folders/75/4xflzt4x1lg02s_1z8cw0s8c0000gn/T//Rtmp5O1ZO5/Rd2pdf69326ea8e0e7'

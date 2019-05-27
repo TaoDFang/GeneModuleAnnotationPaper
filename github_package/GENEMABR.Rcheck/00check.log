@@ -54,11 +54,10 @@
 * checking for unstated dependencies in ‘tests’ ... OK
 * checking tests ... OK
   Running ‘testthat.R’
-* checking for unstated dependencies in vignettes ... NOTE
-'library' or 'require' call not declared from: ‘devtools’
+* checking for unstated dependencies in vignettes ... OK
 * checking package vignettes in ‘inst/doc’ ... OK
 * checking running R code from vignettes ... NONE
 * checking re-building of vignette outputs ... OK
 * checking PDF version of manual ... OK
 * DONE
-Status: 1 WARNING, 1 NOTE
+Status: 1 WARNING

@@ -35,6 +35,9 @@ for (i in 1:length(all_go_ids)){
 go_list=go_list[-(rmGO_index)]
 
 saveRDS(go_list, "go_list.rds")
+
+
+
 go_list <- readRDS("go_list.rds")
 go_list_names=names(go_list)
 

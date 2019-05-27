@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.4.29)  23 MAY 2019 10:15
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.4.29)  24 MAY 2019 09:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -451,70 +451,65 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <7> on input line 26.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 26.
-(./Rd2.toc [1
-
-
-{/Users/taofang/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}])
+(./Rd2.toc)
 \tf@toc=\write5
 \openout5 = `Rd2.toc'.
 
-LaTeX Font Info:    Font shape `OT1/zi4/m/n' will be
-(Font)              scaled to size 9.0pt on input line 71.
- [2]
-Overfull \hbox (3.74292pt too wide) in paragraph at lines 92--93
-\OT1/cmr/m/it/10 gene[]input\OT1/cmr/m/n/10 .It should have same ID types(E.g. 
-path-way ID, path-way names)
- []
+ [1
 
-[3]
-Overfull \hbox (23.28088pt too wide) in paragraph at lines 148--148
+
+{/Users/taofang/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+LaTeX Font Info:    Font shape `OT1/zi4/m/n' will be
+(Font)              scaled to size 9.0pt on input line 62.
+ [2]
+Overfull \hbox (23.28088pt too wide) in paragraph at lines 146--146
  []\OT1/zi4/m/n/9 from_id2name((selected_pathways=list(c("GO:0032991#GO:0044425
 #GO:0044464"),"R-HSA-5357801")))[] 
  []
 
-
-Overfull \hbox (0.47627pt too wide) in paragraph at lines 170--174
+[3]
+Overfull \hbox (0.47627pt too wide) in paragraph at lines 168--172
 []\OT1/cmr/m/n/10 http://geneontology.org/docs/download-ontology/, https://reac
 tome.org/download-data A
  []
 
 [4]
-Overfull \hbox (35.44841pt too wide) in paragraph at lines 222--224
+Overfull \hbox (35.44841pt too wide) in paragraph at lines 221--223
 []\OT1/cmr/m/n/10 The igraph for-mat tree was con-structed by us-ing data from 
 http://geneontology.org/docs/download-
  []
 
-[5]
-Overfull \hbox (60.27242pt too wide) in paragraph at lines 248--250
+
+Overfull \hbox (60.27242pt too wide) in paragraph at lines 247--249
 \OT1/cmr/m/n/10 three roots notes in GO on-tol-ogy tree: GO:0008150 (bi-o-log-i
 -cal[]process), GO:0003674(molecular[]function),
  []
 
-[6] [7] [8] (./Rd2.ind [9] [10
+[5] [6] [7] [8] (./Rd2.ind [9] [10
 
 
 ])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 414.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 414.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 419.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 419.
  (./Rd2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 414.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 414.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 419.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 419.
 Package rerunfilecheck Info: File `Rd2.out' has not changed.
 (rerunfilecheck)             Checksum: 0F224C7BBE520C8D8B79C62E3DB2C602;965.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 414.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 419.
  ) 
 Here is how much of TeX's memory you used:
  5786 strings out of 494562
  86212 string characters out of 6174329
- 172111 words of memory out of 5000000
+ 171111 words of memory out of 5000000
  9289 multiletter control sequences out of 15000+600000
  10874 words of font info for 38 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 38i,6n,36p,267b,558s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,6n,36p,217b,590s stack positions out of 5000i,500n,10000p,200000b,80000s
  </Users/taofang/.TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600p
 k>{/Users/taofang/Library/TinyTeX/texmf-dist/fonts/enc/dvips/inconsolata/i4-ot1
 -0.enc}</Users/taofang/Library/TinyTeX/texmf-dist/fonts/type1/public/inconsolat
@@ -531,7 +526,7 @@ ng/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></Users
 /taofang/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><
 /Users/taofang/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10
 .pfb>
-Output written on Rd2.pdf (10 pages, 174428 bytes).
+Output written on Rd2.pdf (10 pages, 173408 bytes).
 PDF statistics:
  283 PDF objects out of 1000 (max. 8388607)
  255 compressed objects within 3 object streams

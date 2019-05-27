@@ -135,7 +135,7 @@ $`R-HSA-111469`
 > cleanEx()
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  2.319 0.205 2.535 0 0 
+Time elapsed:  2.665 0.23 2.93 0 0 
 > grDevices::dev.off()
 null device 
           1 

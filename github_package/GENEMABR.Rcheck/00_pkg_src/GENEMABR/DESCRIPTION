@@ -15,4 +15,4 @@ VignetteBuilder: knitr
 Suggests: BiocStyle, knitr, rmarkdown, testthat (>= 2.1.0)
 RoxygenNote: 6.1.1
 NeedsCompilation: no
-Packaged: 2019-05-23 09:12:58 UTC; taofang
+Packaged: 2019-05-24 08:36:40 UTC; taofang

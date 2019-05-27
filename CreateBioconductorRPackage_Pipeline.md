@@ -92,12 +92,15 @@ install_github("TaoDFang/GENEMABR")
 learn some formats from: https://github.com/campbio/celda/blob/master/vignettes/DecontX-analysis.Rmd
 Better to generate pdf format file, its easier to be distributed.
 <!-- Need to isnatll Tex tool tinytex::install_tinytex() or http://www.tug.org/mactex/ -->
+TinyTeX installed to /Users/taofang/Library/TinyTeX
+Warning message:
+Detected an existing tlmgr at /usr/local/bin/tlmgr. It seems TeX Live has been installed (check tinytex::tinytex_root()). You are recommended to uninstall it, although TinyTeX should work well alongside another LaTeX distribution if a LaTeX document is compiled through tinytex::latexmk().
 
 remember to add  VignetteEngine https://www.bioconductor.org/packages/devel/bioc/vignettes/BiocStyle/inst/doc/AuthoringRmdVignettes.html
 latex_engine options: pdflatex, xelatex and lualatex,
 at first lualatex only works for macos while pdflatex and xelatex failed after only install basic mactex.
 But lualatex cause some errors in R CMD check process.
-So maybe better to install full version MacTex and  use pdflatex engine 
+So maybe better to install full version MacTex and  use pdflatex engine
 
 ## coding style
 https://bioconductor.org/developers/how-to/coding-style/
@@ -147,9 +150,10 @@ http://bioconductor.org/developers/how-to/buildingPackagesForBioc/
 
 In linux/macOS commond line (go to folder /Users/taofang/Documents/GeneModuleAnnotationPaper/github_package):
 R CMD build GENEMABR
-
 R CMD check GENEMABR_0.99.0.tar.gz
 
+checking PDF version of manual without hyperrefs or index ... ERROR
+* DONE
 
 In R:
 library(BiocCheck)
@@ -171,5 +175,67 @@ $note
 
 ##  submission
 https://bioconductor.org/developers/package-submission/
+https://github.com/Bioconductor/Contributions/issues/1128
+
+
+## debug for bioconductor
+https://github.com/Bioconductor/Contributions/issues/1128
+### use GO.db, org.Hs.eg.db dababase
+
+
+Debug:
+test1=regression_selected_pathways(gene_input=gene_list,gene_pathway_matrix=NULL,
+                               alpha=0.5,family="gaussian") #,standardize=FALSE
+test1$selected_pathways_names
+plot(test1$model)
+
+
+test2=regression_selected_pathways(gene_input=gene_list,
+                                gene_pathway_matrix=NULL,alpha=0.5,family="binomial") # ,standardize=FALSE
+test2$selected_pathways_names
+test2$model$lambda.min
+
+test2=regression_selected_pathways(gene_input=gene_list,
++                                 gene_pathway_matrix=NULL,alpha=0.5,family="binomial") # ,standardize=FALSE
+
+
+
+[1] "I am binomial"
+> test2$selected_pathways_names
+$`R-HSA-1810476`
+[1] "RIP-mediated NFkB activation via ZBP1"
+
+$`R-HSA-5603029`
+[1] "IkBA variant leads to EDA-ID"
+
+$`R-HSA-1606322`
+[1] "ZBP1(DAI) mediated induction of type I IFNs"
+
+> test2$model$lambda.min
+[1] 0.01152732
+> test1=regression_selected_pathways(gene_input=gene_list,gene_pathway_matrix=NULL,
++                                alpha=0.5,family="gaussian") #,standardize=FALSE
+
+
+[1] "I am gaussian"
+> test1$selected_pathways_names
+$`R-HSA-1810476`
+[1] "RIP-mediated NFkB activation via ZBP1"
+
+$`R-HSA-5603029`
+[1] "IkBA variant leads to EDA-ID"
+
+$`GO:0032688`
+[1] "negative regulation of interferon-beta production"
+
+$`R-HSA-933542`
+[1] "TRAF6 mediated NF-kB activation"
+
+$`GO:0007249`
+[1] "I-kappaB kinase/NF-kappaB signaling"
+
+$`R-HSA-1606322`
+[1] "ZBP1(DAI) mediated induction of type I IFNs"
+
 
 ## keep tring and debuging until finished in the end
