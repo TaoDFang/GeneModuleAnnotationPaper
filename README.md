@@ -5,7 +5,7 @@ Raw method description can be found here: https://docs.google.com/document/d/1mR
 
 Manuscript for the paper can be found here: https://docs.google.com/document/d/1hIi_es2aiKlrVyS4edSqtUPSYPOmVxej5_J-ZagQnDc/edit
 
-A R package for this paper can be found at: https://github.com/TaoDFang/GENEMABR
+A R package for this paper can be found at: https://github.com/TaoDFang/gerr
 
 The application of this paper to Disease Module Identification DREAM Challenge project can be found in https://github.com/TaoDFang/GeneModuleAnnotation
 
