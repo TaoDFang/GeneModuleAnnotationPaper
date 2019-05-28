@@ -81,6 +81,10 @@ overlap_coefficient<-function(set1,set2){
   return(abs(length(intersect(set1,set2)))/min(length(set1),length(set2)))
 }
 
+jaccard_index<-function(set1,set2){
+  return(abs(length(intersect(set1,set2)))/abs(length(union(set1,set2))))
+}
+
 
 ### load gene information for gene sets
 # library(data.table)
@@ -110,8 +114,8 @@ tao_go_id=unique(Tao_go_results$pathway_id)  #1949
 daniel_go_id=unique(Daniel_network_GO_results$termId) #10838
 total_overlap_go_id=intersect(tao_go_id,daniel_go_id)  #1872
 
-overlap_go_terms_frame=data.frame(matrix(0,nrow = length(common_module_names),ncol = 5),row.names = common_module_names)
-colnames(overlap_go_terms_frame)=c('tao_go_pathway_num','daniel_go_pathway_num','overlap_go_pathway_num',"overlapCoef_go_pathway_num","overlapCoef_go_gene_num")
+overlap_go_terms_frame=data.frame(matrix(0,nrow = length(common_module_names),ncol = 7),row.names = common_module_names)
+colnames(overlap_go_terms_frame)=c('tao_go_pathway_num','daniel_go_pathway_num','overlap_go_pathway_num',"overlapCoef_go_pathway_num","overlapCoef_go_gene_num","jaccardJndex_go_pathway_num","jaccardJndex_go_gene_num")
 
 for(i in 1:length(common_module_names)){
   tao_selected_pathwayIDs=Tao_go_results[Tao_go_results$module==common_module_names[i],"pathway_id"]
@@ -123,6 +127,9 @@ for(i in 1:length(common_module_names)){
   ##overlapp coefficient of gene sets/pathways
   overlap_go_terms_frame[common_module_names[i],"overlapCoef_go_pathway_num"]=overlap_coefficient(tao_selected_pathwayIDs,daniel_selected_pathwayIDs)
   
+  ## jaccard index  of gene sets/pathways
+  overlap_go_terms_frame[common_module_names[i],"jaccardJndex_go_pathway_num"]=jaccard_index(tao_selected_pathwayIDs,daniel_selected_pathwayIDs)
+  
   
   ##overlapp coefficient of genes
   
@@ -130,6 +137,9 @@ for(i in 1:length(common_module_names)){
   daniel_selected_genes=unique(unlist(lapply(daniel_selected_pathwayIDs, function(id){go_list[[id]]})))
   
   overlap_go_terms_frame[common_module_names[i],"overlapCoef_go_gene_num"]=overlap_coefficient(tao_selected_genes,daniel_selected_genes)
+  
+  ##jaccard index of genes
+  overlap_go_terms_frame[common_module_names[i],"jaccardJndex_go_gene_num"]=jaccard_index(tao_selected_genes,daniel_selected_genes)
   
 }
 
@@ -150,6 +160,22 @@ ggsave(filename = "Fig1C.jpg",
        height = 4,
        dpi = 600)
 
+ggsave(filename = "Fig1C_jaccardIndex.jpg",
+       plot = ggplot(overlap_go_terms_frame,aes(x=jaccardJndex_go_pathway_num))+
+         geom_histogram(
+           aes(y=..density..),
+           bins=30,
+           colour="black", fill="white"
+         )+
+         geom_density(aes(y=..density..)) +
+         theme_bw()+
+         theme(text = element_text(size=8))+
+         xlab("Jaccard index of gene-sets")+
+         ylab('Density'),
+       width = 3,
+       height = 4,
+       dpi = 600)
+
 
 ggsave(filename = "Fig1D.jpg",
        plot = ggplot(overlap_go_terms_frame,aes(x=overlapCoef_go_gene_num))+
@@ -162,6 +188,23 @@ ggsave(filename = "Fig1D.jpg",
          theme_bw()+
          theme(text = element_text(size=8))+
          xlab("Overlap coefficients of genes")+
+         ylab('Density'),
+       width = 3,
+       height = 4,
+       dpi = 600)
+
+
+ggsave(filename = "Fig1D_jaccardIndex.jpg",
+       plot = ggplot(overlap_go_terms_frame,aes(x=jaccardJndex_go_gene_num))+
+         geom_histogram(
+           aes(y=..density..),
+           bins=30,
+           colour="black", fill="white"
+         )+
+         geom_density(aes(y=..density..)) +
+         theme_bw()+
+         theme(text = element_text(size=8))+
+         xlab("Jaccard index of genes")+
          ylab('Density'),
        width = 3,
        height = 4,
