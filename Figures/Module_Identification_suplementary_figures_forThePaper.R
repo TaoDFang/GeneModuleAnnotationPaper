@@ -304,7 +304,8 @@ ggsave(filename = "Fig1G.jpg",
        plot = ggplot() + 
          geom_density(data =gerr_FETFDR_normRanks, aes(x = gerr_FETFFDR,fill = "FET+FDR && gerr"),color = "black",alpha=0.7) + 
          geom_density(data = nonGerr_FETFDR_normRanks, aes(x = nonGerr_FETFFDR,fill = "FET+FDR - gerr"),color = "black", alpha = 0.7)+
-         xlab('')+ylab('density') ,
+         xlab('Normalized rank')+ylab('density')+
+         theme(legend.title = element_text(size=8),text = element_text(size=8) ),
          #theme(legend.position = "top"),
          #scale_fill_manual(name = "", values = c("#E69F00", "#56B4E9"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
          #scale_fill_manual(name = "", values = c("black", "red"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
