@@ -37,9 +37,11 @@ ggsave(filename = "Fig1A.jpg",
          geom_boxplot()+
        xlab("Method")+
        ylab('Num of gene-sets')+
-        theme(text = element_text(size=8)),
-       width = 85,
-       height = 100,
+         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
+        theme(text = element_text(size=10)),
+       width = 75,
+       height = 60,
        units = "mm",
        dpi = 600)
 
@@ -62,13 +64,14 @@ scatter_plot=data.frame(module=common_module_names,row.names = common_module_nam
 
 ggsave(filename = "Fig1B.jpg",
        plot =ggplot(scatter_plot, aes(x=daniel_pathway_num, y=tao_pathway_num)) + geom_point(shape=1,size=1) +
-         theme_bw()+
+         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
          geom_abline(intercept = 0, slope = 1,colour='red',linetype="dashed")+
          xlab("Num of gene-sets by FET+FDR")+
          ylab('Num of gene-sets by gerr')+
-         theme(text = element_text(size=8)),
-       width = 85,
-       height = 100,
+         theme(text = element_text(size=10)),
+       width = 75,
+       height = 60,
        units = "mm",
        dpi = 600)
 
@@ -154,12 +157,13 @@ ggsave(filename = "Fig1C.jpg",
            colour="black", fill="white"
          )+
          geom_density(aes(y=..density..)) +
-         theme_bw()+
-         theme(text = element_text(size=8))+
+         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
+         theme(text = element_text(size=10))+
          xlab("Overlap coefficients of gene-sets")+
          ylab('Density'),
-       width = 85,
-       height = 100,
+       width = 75,
+       height = 60,
        units = "mm",
        dpi = 600)
 
@@ -172,7 +176,7 @@ ggsave(filename = "Fig1C_jaccardIndex.jpg",
          )+
          geom_density(aes(y=..density..)) +
          theme_bw()+
-         theme(text = element_text(size=8))+
+         theme(text = element_text(size=10))+
          xlab("Jaccard index of gene-sets")+
          ylab('Density'),
        width = 85,
@@ -189,12 +193,13 @@ ggsave(filename = "Fig1D.jpg",
            colour="black", fill="white"
          )+
          geom_density(aes(y=..density..)) +
-         theme_bw()+
-         theme(text = element_text(size=8))+
+         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
+         theme(text = element_text(size=10))+
          xlab("Overlap coefficients of genes")+
          ylab('Density'),
-       width = 85,
-       height = 100,
+       width = 75,
+       height = 60,
        units = "mm",
        dpi = 600)
 
@@ -219,7 +224,8 @@ ggsave(filename = "Fig1D_jaccardIndex.jpg",
 #tao_go_pathway_num_range=unique(sort(overlap_go_terms_frame$tao_go_pathway_num))
 
 
-## Fig 1E+taofang@ebi.ac.uk what are the ranks of the gene-sets identified by gerr in the FET+FDR procedure? 
+## Fig 1E F G 
+#+taofang@ebi.ac.uk what are the ranks of the gene-sets identified by gerr in the FET+FDR procedure? 
 #I guess they should on average rank higher than those not selected by gerr, not correct? Can be make a plot for that? 
 #If we transform ranking to numeric values from 0 and 1, then we can use a density plot show that gerr selected gene-sets are generally ranking high.
 
@@ -302,18 +308,85 @@ ggsave(filename = "Fig1F.jpg",
 
 ggsave(filename = "Fig1G.jpg",
        plot = ggplot() + 
-         geom_density(data =gerr_FETFDR_normRanks, aes(x = gerr_FETFFDR,fill = "FET+FDR && gerr"),color = "black",alpha=0.7) + 
+         geom_density(data =gerr_FETFDR_normRanks, aes(x = gerr_FETFFDR,fill = "FET+FDR && gerr "),color = "black",alpha=0.7) + 
          geom_density(data = nonGerr_FETFDR_normRanks, aes(x = nonGerr_FETFFDR,fill = "FET+FDR - gerr"),color = "black", alpha = 0.7)+
-         xlab('Normalized rank')+ylab('density')+
-         theme(legend.title = element_text(size=8),text = element_text(size=8) ),
+         xlab('Normalized rank (gene-sets)')+ylab('density')+
+         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
+         theme(legend.title = element_text(size=8),legend.text=element_text(size=8), legend.key.size = unit(0.3, "cm"),
+               text = element_text(size=10) )+
+         theme(legend.position = "top",legend.title=element_blank()),
          #theme(legend.position = "top"),
          #scale_fill_manual(name = "", values = c("#E69F00", "#56B4E9"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
          #scale_fill_manual(name = "", values = c("black", "red"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
-       width = 85,
-       height = 100,
+       width = 75,
+       height = 60,
        units = "mm",
        dpi = 600)
 
+
+
+## Fig 1H
+
+gerr_FETFDR_genes_list=c()
+nonGerr_FETFDR_genes_list=c()
+for(i in 1:length(common_module_names)){
+  print(i)
+  tao_module_go_ids=Tao_go_results[Tao_go_results$module==common_module_names[i],"pathway_id"]
+  tao_module_go_genes=unique(unlist(lapply(tao_module_go_ids, function(id){go_list[[id]]})))
+  
+  daniel_module_go_ids=Daniel_network_GO_results[Daniel_network_GO_results$module==common_module_names[i],"termId"]
+  daniel_module_go_ranks=rank(Daniel_network_GO_results[Daniel_network_GO_results$module==common_module_names[i],"P.noncentral.fdr"],
+                              ties.method = "min")
+  names(daniel_module_go_ranks)=daniel_module_go_ids
+  daniel_module_go_norm_ranks=daniel_module_go_ranks/length(daniel_module_go_ranks)
+  
+
+  daniel_module_go_genes=unique(unlist(lapply(daniel_module_go_ids, function(id){go_list[[id]]})))
+  daniel_module_go_genes_norm_ranks=c()
+  for(gene in daniel_module_go_genes){
+    a=1
+    for (id in daniel_module_go_ids) {
+      if(gene %in% go_list[[id]] ){
+        a=min(a,daniel_module_go_norm_ranks[id])
+      }
+    }
+    daniel_module_go_genes_norm_ranks=c(daniel_module_go_genes_norm_ranks,a)
+  }
+  names(daniel_module_go_genes_norm_ranks)=daniel_module_go_genes
+  
+  
+  overlap_genes=intersect(tao_module_go_genes,daniel_module_go_genes)
+  gerr_FETFDR_genes=daniel_module_go_genes_norm_ranks[overlap_genes]
+  nonGerr_FETFDR_genes=daniel_module_go_genes_norm_ranks[setdiff(daniel_module_go_genes,overlap_genes)]
+  
+  gerr_FETFDR_genes_list=c(gerr_FETFDR_genes_list,gerr_FETFDR_genes)
+  nonGerr_FETFDR_genes_list=c(nonGerr_FETFDR_genes_list,nonGerr_FETFDR_genes)
+  
+}
+
+saveRDS(gerr_FETFDR_genes_list,"gerr_FETFDR_genes_list.rds")
+saveRDS(nonGerr_FETFDR_genes_list,"nonGerr_FETFDR_genes_list.rds")
+
+
+gerr_FETFDR_genes_normRanks=data.frame(gerr_FETFFDR=gerr_FETFDR_genes_list)
+nonGerr_FETFDR_genes_normRanks=data.frame(nonGerr_FETFFDR=nonGerr_FETFDR_genes_list)
+ggsave(filename = "Fig1H.jpg",
+       plot = ggplot() + 
+         geom_density(data =gerr_FETFDR_genes_normRanks, aes(x = gerr_FETFFDR,fill = "FET+FDR && gerr"),color = "black",alpha=0.7) + 
+         geom_density(data = nonGerr_FETFDR_genes_normRanks, aes(x = nonGerr_FETFFDR,fill = "FET+FDR - gerr"),color = "black", alpha = 0.7)+
+         xlab('Normalized rank (genes)')+ylab('density')+    
+         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
+       theme(legend.title = element_text(size=8),legend.text=element_text(size=8), legend.key.size = unit(0.3, "cm"),
+                                                                        text = element_text(size=10))+
+       theme(legend.position = "top",legend.title=element_blank()),
+       #scale_fill_manual(name = "", values = c("#E69F00", "#56B4E9"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
+       #scale_fill_manual(name = "", values = c("black", "red"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
+       width = 75,
+       height = 60,
+       units = "mm",
+       dpi = 600)
 
 
 
