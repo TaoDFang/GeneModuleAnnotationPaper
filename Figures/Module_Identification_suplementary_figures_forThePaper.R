@@ -38,8 +38,9 @@ ggsave(filename = "Fig1A.jpg",
        xlab("Method")+
        ylab('Num of gene-sets')+
         theme(text = element_text(size=8)),
-       width = 3,
-       height = 4,
+       width = 85,
+       height = 100,
+       units = "mm",
        dpi = 600)
 
 ###median=XXX, interquartile range/IQR=XXX
@@ -66,8 +67,9 @@ ggsave(filename = "Fig1B.jpg",
          xlab("Num of gene-sets by FET+FDR")+
          ylab('Num of gene-sets by gerr')+
          theme(text = element_text(size=8)),
-       width = 3,
-       height = 4,
+       width = 85,
+       height = 100,
+       units = "mm",
        dpi = 600)
 
 ### correlation
@@ -156,8 +158,9 @@ ggsave(filename = "Fig1C.jpg",
          theme(text = element_text(size=8))+
          xlab("Overlap coefficients of gene-sets")+
          ylab('Density'),
-       width = 3,
-       height = 4,
+       width = 85,
+       height = 100,
+       units = "mm",
        dpi = 600)
 
 ggsave(filename = "Fig1C_jaccardIndex.jpg",
@@ -172,8 +175,9 @@ ggsave(filename = "Fig1C_jaccardIndex.jpg",
          theme(text = element_text(size=8))+
          xlab("Jaccard index of gene-sets")+
          ylab('Density'),
-       width = 3,
-       height = 4,
+       width = 85,
+       height = 100,
+       units = "mm",
        dpi = 600)
 
 
@@ -189,8 +193,9 @@ ggsave(filename = "Fig1D.jpg",
          theme(text = element_text(size=8))+
          xlab("Overlap coefficients of genes")+
          ylab('Density'),
-       width = 3,
-       height = 4,
+       width = 85,
+       height = 100,
+       units = "mm",
        dpi = 600)
 
 
@@ -206,8 +211,9 @@ ggsave(filename = "Fig1D_jaccardIndex.jpg",
          theme(text = element_text(size=8))+
          xlab("Jaccard index of genes")+
          ylab('Density'),
-       width = 3,
-       height = 4,
+       width = 85,
+       height = 100,
+       units = "mm",
        dpi = 600)
 
 #tao_go_pathway_num_range=unique(sort(overlap_go_terms_frame$tao_go_pathway_num))
@@ -266,8 +272,9 @@ ggsave(filename = "Fig1E.jpg",
          theme(text = element_text(size=8))+
          xlab("Normalized ranks ")+
          ylab('Density'),
-       width = 3,
-       height = 4,
+       width = 85,
+       height = 100,
+       units = "mm",
        dpi = 600)
 
 
@@ -285,8 +292,9 @@ ggsave(filename = "Fig1F.jpg",
          theme(text = element_text(size=8))+
          xlab("Normalized ranks ")+
          ylab('Density'),
-       width = 3,
-       height = 4,
+       width = 85,
+       height = 100,
+       units = "mm",
        dpi = 600)
 
 
@@ -300,8 +308,9 @@ ggsave(filename = "Fig1G.jpg",
          #theme(legend.position = "top"),
          #scale_fill_manual(name = "", values = c("#E69F00", "#56B4E9"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
          #scale_fill_manual(name = "", values = c("black", "red"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
-       width = 4,
-       height = 3,
+       width = 85,
+       height = 100,
+       units = "mm",
        dpi = 600)
 
 
