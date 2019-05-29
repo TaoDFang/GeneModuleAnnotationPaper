@@ -213,8 +213,96 @@ ggsave(filename = "Fig1D_jaccardIndex.jpg",
 #tao_go_pathway_num_range=unique(sort(overlap_go_terms_frame$tao_go_pathway_num))
 
 
-# Fig 1D
+## Fig 1E+taofang@ebi.ac.uk what are the ranks of the gene-sets identified by gerr in the FET+FDR procedure? 
+#I guess they should on average rank higher than those not selected by gerr, not correct? Can be make a plot for that? 
+#If we transform ranking to numeric values from 0 and 1, then we can use a density plot show that gerr selected gene-sets are generally ranking high.
 
+
+Daniel_network_GO_results=Daniel_network_results[grepl("GO",Daniel_network_results$termId),]
+daniel_GO_module_names=unique(Daniel_network_GO_results$module)
+Tao_go_results=Tao_results[grep("GO",Tao_results$pathway_id),]
+tao_go_module_names=unique(Tao_go_results$module)
+common_module_names=intersect(tao_go_module_names,daniel_GO_module_names)
+
+tao_go_id=unique(Tao_go_results$pathway_id)  #1949
+daniel_go_id=unique(Daniel_network_GO_results$termId) #10838
+total_overlap_go_id=intersect(tao_go_id,daniel_go_id)  #1872
+
+overlap_go_terms_frame=data.frame(matrix(0,nrow = length(common_module_names),ncol = 7),row.names = common_module_names)
+colnames(overlap_go_terms_frame)=c('tao_go_pathway_num','daniel_go_pathway_num','overlap_go_pathway_num',"overlapCoef_go_pathway_num","overlapCoef_go_gene_num","jaccardJndex_go_pathway_num","jaccardJndex_go_gene_num")
+
+gerr_FETFDR_list=c()
+nonGerr_FETFDR_list=c()
+for(i in 1:length(common_module_names)){
+  tao_module_go_ids=Tao_go_results[Tao_go_results$module==common_module_names[i],"pathway_id"]
+  
+    
+  daniel_module_go_ids=Daniel_network_GO_results[Daniel_network_GO_results$module==common_module_names[i],"termId"]
+  daniel_module_go_ranks=rank(Daniel_network_GO_results[Daniel_network_GO_results$module==common_module_names[i],"P.noncentral.fdr"],
+                              ties.method = "min")
+  names(daniel_module_go_ranks)=daniel_module_go_ids
+  daniel_module_go_norm_ranks=daniel_module_go_ranks/length(daniel_module_go_ranks)
+  
+  overlap_ids=intersect(tao_module_go_ids,daniel_module_go_ids)
+  gerr_FETFDR=daniel_module_go_norm_ranks[overlap_ids]
+  nonGerr_FETFDR=daniel_module_go_norm_ranks[setdiff(daniel_module_go_ids,overlap_ids)]
+  
+  gerr_FETFDR_list=c(gerr_FETFDR_list,gerr_FETFDR)
+  nonGerr_FETFDR_list=c(nonGerr_FETFDR_list,nonGerr_FETFDR)
+  
+}
+
+
+gerr_FETFDR_normRanks=data.frame(gerr_FETFFDR=gerr_FETFDR_list)
+ggsave(filename = "Fig1E.jpg",
+       plot = ggplot(gerr_FETFDR_normRanks,aes(x=gerr_FETFFDR))+
+         geom_histogram(
+           aes(y=..density..),
+           bins=30,
+           colour="black", fill="white"
+         )+
+         geom_density(aes(y=..density..)) +
+         theme_bw()+
+         theme(text = element_text(size=8))+
+         xlab("Normalized ranks ")+
+         ylab('Density'),
+       width = 3,
+       height = 4,
+       dpi = 600)
+
+
+##
+nonGerr_FETFDR_normRanks=data.frame(nonGerr_FETFFDR=nonGerr_FETFDR_list)
+ggsave(filename = "Fig1F.jpg",
+       plot = ggplot(nonGerr_FETFDR_normRanks,aes(x=nonGerr_FETFFDR))+
+         geom_histogram(
+           aes(y=..density..),
+           bins=30,
+           colour="black", fill="white"
+         )+
+         geom_density(aes(y=..density..)) +
+         theme_bw()+
+         theme(text = element_text(size=8))+
+         xlab("Normalized ranks ")+
+         ylab('Density'),
+       width = 3,
+       height = 4,
+       dpi = 600)
+
+
+
+
+ggsave(filename = "Fig1G.jpg",
+       plot = ggplot() + 
+         geom_density(data =gerr_FETFDR_normRanks, aes(x = gerr_FETFFDR,fill = "FET+FDR && gerr"),color = "black",alpha=0.7) + 
+         geom_density(data = nonGerr_FETFDR_normRanks, aes(x = nonGerr_FETFFDR,fill = "FET+FDR - gerr"),color = "black", alpha = 0.7)+
+         xlab('')+ylab('density') ,
+         #theme(legend.position = "top"),
+         #scale_fill_manual(name = "", values = c("#E69F00", "#56B4E9"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
+         #scale_fill_manual(name = "", values = c("black", "red"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
+       width = 4,
+       height = 3,
+       dpi = 600)
 
 
 
