@@ -221,6 +221,62 @@ ggsave(filename = "Fig1D_jaccardIndex.jpg",
        units = "mm",
        dpi = 600)
 
+
+
+## fig1I
+#Another interesting plot: ratio of GOI genes to non-GOI genes for:
+#- gene sets identified by both methods
+#- gene sets identified by your method
+#- gene sets identified by FET+FDR
+
+
+
+
+
+## fig1J 
+#I would suggest stacked barplot with three colors:
+#  unique gene sets detected by one method, unique gene set by another and overlap.
+#(perhaps normalized by total number of sets and sorted by number of unique sets detected by FET)
+
+stackedBarplot_frame=data.frame(matrix(0,nrow = length(common_module_names)*3,ncol = 3))
+colnames(stackedBarplot_frame)=c("module_names","method","ratio")
+stackedBarplot_frame$module_names=unlist(lapply(common_module_names,function(x)(rep(x,3))))
+
+for(i in 1:length(common_module_names)){
+  tao_selected_pathwayIDs=Tao_go_results[Tao_go_results$module==common_module_names[i],"pathway_id"]
+  daniel_selected_pathwayIDs=Daniel_network_GO_results[Daniel_network_GO_results$module==common_module_names[i],"termId"]
+
+  union_go_ids=union(tao_selected_pathwayIDs,daniel_selected_pathwayIDs)
+  TL=length(union_go_ids)  #total length
+  intsect_go_ids=intersect(tao_selected_pathwayIDs,daniel_selected_pathwayIDs)
+  FET_ids=setdiff(daniel_selected_pathwayIDs,intsect_go_ids)
+  gerr_ids=setdiff(tao_selected_pathwayIDs,intsect_go_ids)
+  
+  stackedBarplot_frame[stackedBarplot_frame$module_names==common_module_names[i],"method"]=c("FET+FDR only","gerr only","FET+FDR & gerr")
+  stackedBarplot_frame[stackedBarplot_frame$module_names==common_module_names[i],"ratio"]=c(length(FET_ids)/TL,length(gerr_ids)/TL,length(intsect_go_ids)/TL)
+  
+  
+}
+
+
+stackedBarplot_frame$method=factor(stackedBarplot_frame$method,levels = c("gerr only","FET+FDR & gerr","FET+FDR only"))
+ggsave(filename = "Fig1J.jpg",
+       plot =ggplot(stackedBarplot_frame, aes(x=module_names, y=ratio,fill=method)) +
+         geom_bar(stat="identity")+
+         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
+         theme(legend.title = element_text(size=8),legend.text=element_text(size=8), legend.key.size = unit(0.3, "cm"),
+               text = element_text(size=10))+
+         theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+         theme(legend.position = "top",legend.title=element_blank())+
+         xlab("Modules")+
+         ylab('Ratios')+
+         theme(text = element_text(size=10)),
+       width = 75,
+       height = 60,
+       units = "mm",
+       dpi = 600)
+
 #tao_go_pathway_num_range=unique(sort(overlap_go_terms_frame$tao_go_pathway_num))
 
 
@@ -387,6 +443,9 @@ ggsave(filename = "Fig1H.jpg",
        height = 60,
        units = "mm",
        dpi = 600)
+
+
+
 
 
 
