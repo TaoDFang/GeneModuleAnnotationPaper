@@ -242,8 +242,64 @@ module_genesets=lapply(module_genesets,function(x){
   return(x_genes)
 })
 names(module_genesets)=module_names
+module_genesets=module_genesets[grep(names(module_genesets),pattern = "STRING")]
 
 
+GOIgenes_frame=data.frame(matrix(0,nrow = length(common_module_names)*3,ncol = 3))
+colnames(GOIgenes_frame)=c("module_names","method","ratio")
+GOIgenes_frame$module_names=unlist(lapply(common_module_names,function(x)(rep(x,3))))
+
+for(i in 1:length(common_module_names)){
+  tao_selected_pathwayIDs=Tao_go_results[Tao_go_results$module==common_module_names[i],"pathway_id"]
+  daniel_selected_pathwayIDs=Daniel_network_GO_results[Daniel_network_GO_results$module==common_module_names[i],"termId"]
+  
+  union_go_ids=union(tao_selected_pathwayIDs,daniel_selected_pathwayIDs)
+  TL=length(union_go_ids)  #total length
+  intsect_go_ids=intersect(tao_selected_pathwayIDs,daniel_selected_pathwayIDs)
+  FET_ids=setdiff(daniel_selected_pathwayIDs,intsect_go_ids)
+  gerr_ids=setdiff(tao_selected_pathwayIDs,intsect_go_ids)
+  
+  ## for GOI genes
+  GOI_genes=module_genesets[[common_module_names[i]]]
+  
+  intsect_genes=unique(unlist(lapply(intsect_go_ids, function(id){go_list[[id]]})))
+  FET_genes=unique(unlist(lapply(FET_ids, function(id){go_list[[id]]})))
+  gerr_genes=unique(unlist(lapply(gerr_ids, function(id){go_list[[id]]})))
+  
+  intsect_ratio=length(intersect(GOI_genes,intsect_genes))/(length(setdiff(intsect_genes,GOI_genes))+1)
+  FET_ratio=length(intersect(GOI_genes,FET_genes))/(length(setdiff(FET_genes,GOI_genes))+1)
+  gerr_ratio=length(intersect(GOI_genes,gerr_genes))/(length(setdiff(gerr_genes,GOI_genes))+1)
+  
+  
+  
+  GOIgenes_frame[GOIgenes_frame$module_names==common_module_names[i],"method"]=c("FET+FDR only","gerr only","FET+FDR & gerr")
+  GOIgenes_frame[GOIgenes_frame$module_names==common_module_names[i],"ratio"]=c(log2(FET_ratio),log2(gerr_ratio),log2(intsect_ratio))
+  
+}
+
+
+GOIgenes_frame$method=factor(GOIgenes_frame$method,levels = c("FET+FDR only","FET+FDR & gerr","gerr only"))
+ggsave(filename = "Fig1I.jpg",
+       plot =ggplot(GOIgenes_frame, aes(x=ratio,y=..scaled..,fill=method)) +
+         geom_density(alpha=0.4)+
+         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
+         theme(legend.title = element_text(size=8),legend.text=element_text(size=8), legend.key.size = unit(0.3, "cm"),
+               text = element_text(size=10))+
+         #theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+         theme(legend.position = "top",legend.title=element_blank())+
+         theme(text = element_text(size=10)),
+       width = 75,
+       height = 60,
+       units = "mm",
+       dpi = 600)
+
+
+
+## fig1J 
+#I would suggest stacked barplot with three colors:
+#  unique gene sets detected by one method, unique gene set by another and overlap.
+#(perhaps normalized by total number of sets and sorted by number of unique sets detected by FET)
 stackedBarplot_frame=data.frame(matrix(0,nrow = length(common_module_names)*3,ncol = 3))
 colnames(stackedBarplot_frame)=c("module_names","method","ratio")
 stackedBarplot_frame$module_names=unlist(lapply(common_module_names,function(x)(rep(x,3))))
@@ -265,16 +321,10 @@ for(i in 1:length(common_module_names)){
   
 }
 
-
-stackedBarplot_frame$method=factor(stackedBarplot_frame$method,levels = c("gerr only","FET+FDR & gerr","FET+FDR only"))
-
-
-
-## fig1J 
-#I would suggest stacked barplot with three colors:
-#  unique gene sets detected by one method, unique gene set by another and overlap.
-#(perhaps normalized by total number of sets and sorted by number of unique sets detected by FET)
-ggsave(filename = "Fig1J.jpg",
+stackedBarplot_frame$method=factor(stackedBarplot_frame$method,levels = c("FET+FDR only","FET+FDR & gerr","gerr only"))
+stackedBarplot_gerr_frame=stackedBarplot_frame[stackedBarplot_frame$method=="gerr only",]
+stackedBarplot_frame$module_names=factor(stackedBarplot_frame$module_names,levels =stackedBarplot_gerr_frame$module_names[order(stackedBarplot_gerr_frame$ratio)] )
+ggsave(filename = "Fig1J.pdf",
        plot =ggplot(stackedBarplot_frame, aes(x=module_names, y=ratio,fill=method)) +
          geom_bar(stat="identity")+
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
@@ -284,12 +334,18 @@ ggsave(filename = "Fig1J.jpg",
          theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
          theme(legend.position = "top",legend.title=element_blank())+
          xlab("Modules")+
-         ylab('Ratios')+
+         ylab('Proportion')+
          theme(text = element_text(size=10)),
        width = 75,
        height = 60,
        units = "mm",
        dpi = 600)
+
+a=stackedBarplot_gerr_frame[order(stackedBarplot_gerr_frame$ratio),]
+b=sapply(a$module_names, function(x){length(module_genesets[[x]])})
+
+c=Daniel_network_GO_results[Daniel_network_GO_results$module=="PPI-STRING_Consensus_mod296",]
+d=Tao_go_results[Tao_go_results$module=="PPI-STRING_Consensus_mod296",]
 
 #tao_go_pathway_num_range=unique(sort(overlap_go_terms_frame$tao_go_pathway_num))
 
@@ -378,8 +434,8 @@ ggsave(filename = "Fig1F.jpg",
 
 ggsave(filename = "Fig1G.jpg",
        plot = ggplot() + 
-         geom_density(data =gerr_FETFDR_normRanks, aes(x = gerr_FETFFDR,fill = "FET+FDR && gerr "),color = "black",alpha=0.7) + 
-         geom_density(data = nonGerr_FETFDR_normRanks, aes(x = nonGerr_FETFFDR,fill = "FET+FDR - gerr"),color = "black", alpha = 0.7)+
+         geom_density(data =gerr_FETFDR_normRanks, aes(x = gerr_FETFFDR,fill = "FET+FDR & gerr "),color = "black",alpha=0.7) + 
+         geom_density(data = nonGerr_FETFDR_normRanks, aes(x = nonGerr_FETFFDR,fill = "FET+FDR only"),color = "black", alpha = 0.7)+
          xlab('Normalized rank (gene-sets)')+ylab('density')+
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
@@ -443,8 +499,8 @@ gerr_FETFDR_genes_normRanks=data.frame(gerr_FETFFDR=gerr_FETFDR_genes_list)
 nonGerr_FETFDR_genes_normRanks=data.frame(nonGerr_FETFFDR=nonGerr_FETFDR_genes_list)
 ggsave(filename = "Fig1H.jpg",
        plot = ggplot() + 
-         geom_density(data =gerr_FETFDR_genes_normRanks, aes(x = gerr_FETFFDR,fill = "FET+FDR && gerr"),color = "black",alpha=0.7) + 
-         geom_density(data = nonGerr_FETFDR_genes_normRanks, aes(x = nonGerr_FETFFDR,fill = "FET+FDR - gerr"),color = "black", alpha = 0.7)+
+         geom_density(data =gerr_FETFDR_genes_normRanks, aes(x = gerr_FETFFDR,fill = "FET+FDR & gerr"),color = "black",alpha=0.7) + 
+         geom_density(data = nonGerr_FETFDR_genes_normRanks, aes(x = nonGerr_FETFFDR,fill = "FET+FDR only"),color = "black", alpha = 0.7)+
          xlab('Normalized rank (genes)')+ylab('density')+    
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
