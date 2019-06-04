@@ -326,7 +326,11 @@ stackedBarplot_gerr_frame=stackedBarplot_frame[stackedBarplot_frame$method=="ger
 stackedBarplot_frame$module_names=factor(stackedBarplot_frame$module_names,levels =stackedBarplot_gerr_frame$module_names[order(stackedBarplot_gerr_frame$ratio)] )
 ggsave(filename = "Fig1J.pdf",
        plot =ggplot(stackedBarplot_frame, aes(x=module_names, y=ratio,fill=method)) +
+<<<<<<< HEAD
          geom_bar(stat="identity",width = 1)+
+=======
+         geom_bar(stat="identity", width=1)+
+>>>>>>> eeecafac6d3fe94a9d66998be4415fdcea895595
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
          theme(legend.title = element_text(size=8),legend.text=element_text(size=8), legend.key.size = unit(0.3, "cm"),
@@ -340,6 +344,9 @@ ggsave(filename = "Fig1J.pdf",
        height = 60,
        units = "mm",
        dpi = 600)
+
+# run imagemagic
+# convert -density 600 -median 3 Fig1J.pdf Fig1J.jpg
 
 a=stackedBarplot_gerr_frame[order(stackedBarplot_gerr_frame$ratio),]
 b=sapply(a$module_names, function(x){length(module_genesets[[x]])})
