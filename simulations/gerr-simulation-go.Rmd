@@ -1,0 +1,822 @@
+---
+title: "Gene-set enrichment with regularized regression: simulation studies wit GO"
+author: "Iakov Davydov, Jitao David Zhang and Tao Fang"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: 
+  pdf_document:
+    toc: true
+  rmarkdown::html_document:
+    self_contained: yes
+---
+
+# Background
+
+In the manuscript *Gene-set Enrichment with Regularized Regression* (`gerr` in short), we propose using regularized regression to model the relationship between $Y$, a dichotomous dependent variable indicating membership of genes in a set of genes of interest (GOI hereafter), and $\Omega$, a matrix of dichotomous variables indicating membership of genes in gene-sets that are potentially overlapping or even identical with each other.
+
+In this document, we perform simulation studies to demonstrate the sensitivity and specificity of the `gerr` method, using the software package of the same name that we published along with the manuscript and the elastic net implemented in the R software package `glmnet`. We compare results produced by `gerr` with the results of the topGO package. Throughout the analysis, we will use the default parameters of `gerr`, using the elastic net of Gaussian-family linear regression, with $\alpha=0.5$.
+
+```{r setup, include=FALSE}
+dir.create('logs')
+library(gerr)
+library(glmnet)
+library(MASS)
+library(stats)
+library(gridExtra)
+library(topGO)
+library(graph)
+library(clustermq)
+options(clustermq.scheduler='slurm', clustermq.template='slurm_clustermq.tmpl')
+library(tidyverse)
+```  
+
+```{r}
+fdr_thr <- 0.05
+```
+
+
+# Gene-sets used for simulations
+
+We wish to use real-world gene-sets that are commonly used by the community for the simulation study for `gerr`, because synthesized gene-sets may have distributions of sizes, defined by the number of unique genes and overlapping patterns that depart from real-world gene-sets. In this simulation we use a random subset of Gene Ontology Biological process annotation.
+
+When performing GO-enrichment, usually GO-terms propagated from child nodes to their parents. In the code below we select random subset of GO-categories and propagfff ate 
+
+```{r gmt}
+# extract GO graph
+go_graph <- makeGOGraph('bp')
+
+# extract human gene sets
+geneSets <- annFUN.org("BP", mapping = "org.Hs.eg.db", ID = "symbol") %>%
+  keep(~length(.) > 10)
+
+# choose ranom genes
+set.seed(1)
+randGeneSets <- sample(geneSets, 50)
+
+# create a subset of GO graph including all the genes of interest
+# note that the number of nodes in this graph will not only include
+# randomGeneSets, but also all their parents
+g_induced <- inducedGraph(go_graph, names(randGeneSets))
+
+# extract levels
+g_lev <- buildLevels(g_induced)
+
+gs_induced <- list()
+
+# propagate terms form children to parents
+for (lev in getNoOfLevels(g_lev):3) {
+  for (child in g_lev$level2nodes[[as.character(lev)]]) {
+    for (parent in edges(g_induced)[[child]]) {
+      gs_induced[[child]] <- c(
+        gs_induced[[child]],
+        geneSets[[child]]
+      ) %>%
+        unique()
+
+      gs_induced[[parent]] <- c(
+        gs_induced[[child]],
+        gs_induced[[parent]],
+        geneSets[[parent]]
+      ) %>%
+        unique()
+      
+    }
+  }
+}
+
+stopifnot(g_lev$level2nodes[['1']]=='all')
+root <- g_lev$level2nodes[['2']]
+gs_induced[[root]] <- NULL
+
+
+length(gs_induced)
+
+# this a list of gene sets including propagated terms
+simGenesets <- gs_induced
+
+# background, aka universe
+bgGenes <- flatten_chr(simGenesets) %>%
+  unique()
+
+# create binary matrix for `gerr`
+gsMatrix <- map(simGenesets, ~ bgGenes %in% .) %>%
+  bind_cols() %>%
+  as.matrix() %>%
+  `*`(1) %>%
+  `rownames<-`(bgGenes)
+
+simLen <- map_int(simGenesets, length)
+```
+
+For the purpose of simulation, we randomly sample 50 gene-sets from all gene-sets and their parents. In total this makes `r length(simGenesets)` gene-sets (GO-terms).
+
+## Distribution of gene-set sizes
+
+The histogram below shows the distribution of gene-set size in the sub-sampled set of gene-sets.
+
+```{r sizeDist, fig.width=6, fig.height=4}
+{
+  hist(simLen, xlab="Number of unique genes", 
+       breaks=50, freq = FALSE,
+       col="lightblue", main="Gene-set size distribution")
+  lines(density(simLen, from=0), col="#004495", lwd=2)
+}
+```
+
+The median gene-set size is `r median(simLen)`, with heavy tail on the right side.
+
+## Distribution of pairwise overlap coefficients between gene-sets
+
+Next, we investigate the degree of redundancy among these gene-sets. We use the overlap coefficient, defined by $|A \cap B|/min(|A|,|B|)$ between two sets $A$ and $B$, to measure this.
+
+When the gene-sets are represented as a dichotomous matrix, pairwise overlap coefficients can be calculated efficiently by using matrix operations. The functions below are extracted from the [ribiosUtils](https://github.com/Accio/ribios/tree/master/ribiosUtils) package, which is currently being submitted to the CRAN repository.
+
+```{r pairwiseOverlapCoefficient}
+uniqueNonNA <- function(x) {
+  x <- x[!is.na(x)]
+  res <- unique(x)
+  return(res)
+}
+columnOverlapCoefficient <- function(x, y=NULL) {
+  if(!is.matrix(x)) x <- as.matrix(x)
+  if(is.null(y)) y <- x
+  if(is.matrix(y)) y <- as.matrix(y)
+  
+  stopifnot(nrow(x)==nrow(y))
+  storage.mode(x) <- storage.mode(y) <- "integer"
+  
+  tmatProd <- t(x) %*% y
+  xCount <- apply(x, 2, function(xx) sum(xx!=0))
+  yCount <- apply(y, 2, function(yy) sum(yy!=0))
+  tmatPmin <- outer(xCount, yCount, pmin)
+  res <- tmatProd/tmatPmin
+  if(is.null(y)) {
+    diag(res) <- 1L
+  }
+  dimnames(res) <- list(colnames(x), colnames(y))
+  return(res)
+} 
+listOverlapCoefficient <- function(x, y=NULL, checkUniqueNonNA=TRUE) {
+  if(checkUniqueNonNA) {
+    x <- lapply(x, uniqueNonNA)
+    if(!is.null(y)) {
+      y <- lapply(y, uniqueNonNA)
+    }
+  }
+
+  if(is.null(y)) {
+    elements <- unique(unlist(x))
+    mat <- sapply(x, function(xx) as.integer(elements %in% xx))
+    res <- columnOverlapCoefficient(mat)
+  } else {
+    elements <- unique(c(unlist(x), unlist(y)))
+    mat1 <- sapply(x, function(xx) as.integer(elements %in% xx))
+    mat2 <- sapply(y, function(xx) as.integer(elements %in% xx))
+    res <- columnOverlapCoefficient(mat1, mat2)
+  }
+  return(res)
+}
+```
+
+With these functions, we can calculate pairwise overlap coefficients between gene-sets.
+
+```{r overlapDist, fig.width=6, fig.height=4}
+simPairwiseOverlap <- columnOverlapCoefficient(gsMatrix) %>%
+  as.dist() %>%
+  broom::tidy(diagonal=FALSE, upper=TRUE) %>%
+  rename(gsSim=item1, gsTest=item2, overlap=distance)
+
+{
+  hist(simPairwiseOverlap$overlap, xlab="Pairwise overlapping cofficient between gene-sets",
+     breaks=50, freq = FALSE,
+     col="orange",
+     main="Overlapping coefficient distribution")
+  lines(density(simPairwiseOverlap$overlap, from=0), col="red", lwd=2)
+}
+
+```
+
+There is large overlap between genes.
+
+# Model verification
+
+We first verify that gene-set enrichment with regularized regression (`gerr`) performs as expected using the simplest simulation that is possible: we assign genes of one gene-set as GOI, and test whether we can recover the gene-set using `gerr`.
+
+## A small-scale verification with few cases
+
+In the code chunk below, we verify that the model works in the sense that the gene-set that is used as source of GOI is correctly recovered, using randomly selected 10 gene-sets.
+
+```{r smallVeri, cache=TRUE}
+set.seed(2)
+selInd <- sample(seq(along=simGenesets), 10)
+selGsName <- names(simGenesets)[selInd]
+selGs <- simGenesets[selInd]
+
+
+selRes <- Q(function(i, goi, gsMatrix)
+  regression_selected_pathways(
+    gene_input=goi,
+    gene_pathway_matrix=gsMatrix),
+  i=seq_along(selGs),
+  goi=selGs,
+  gsMatrix=list(gsMatrix),
+  n_jobs=10,
+  export=list(regression_selected_pathways=regression_selected_pathways)
+)
+
+foundCounts <- sapply(seq(along=selInd), 
+                      function(i) length(selRes[[i]][[1]]))
+isRecovered <- sapply(seq(along=selInd), 
+                      function(i) selGsName[i] %in% names(selRes[[i]][[1]]))
+
+table(foundCounts)
+```
+
+The `foundCounts` variable indicates the number of gene-sets whose coeffient is positive. In this particular example, we have 8 cases where only one gene-set is selected, and thanks to the observation that the input gene-set is all recovered (`isRecovered` is all true), the selected gene-set by `gerr` must be the input geneset.
+
+## The full-scale verification with all gene-sets
+
+Below we run the simulation for all gene-sets. This is not executed by default because of running time (about four minutes in a Linux in Virtual environment with 4G memory and one core Intel i5 CPU), but the idea is the same as the small verification step above.
+
+```{r verificateFunctions}
+estimate_gerr <- function(gs, gsMatrix) {
+  tm <- system.time(
+    res <- regression_selected_pathways(
+      gene_input=gs,
+      gene_pathway_matrix = gsMatrix)
+    )
+    tibble(
+      method='gerr',
+      time=tm['elapsed'],
+      res=list(tibble(
+        gsTest=colnames(gsMatrix),
+        detected=colnames(gsMatrix) %in% names(res$selected_pathways_names)
+      )))
+}
+
+runGerr <- function(genesets, gsMatrix, index) {
+  stopifnot(index %in% seq(along=genesets))
+  selGsName <- names(genesets)[index]
+  selGs <- genesets[index]
+  imap_dfr(selGs, ~ estimate_gerr(., gsMatrix), .id='gsSim')
+}
+```
+
+
+```{r verificateAll, cache=TRUE}
+verifGerr <- Q(runGerr,
+  index=seq_along(simGenesets),
+  genesets=list(simGenesets),
+  gsMatrix=list(gsMatrix),
+  export=list(
+    estimate_gerr=estimate_gerr
+    ),
+  pkgs=c('gerr', 'tidyverse'),
+  n_jobs=100) %>%
+  bind_rows()
+
+```
+
+
+
+We first confirm that each gene-sets used as a GOI was successfully rediscovered by `gerr`.
+```{r verficateRes}
+verifGerr %>%
+  unnest(res) %>%
+  filter(gsTest==gsSim) %>%
+  summarize(detected=mean(detected))
+```
+
+Next we query the frequency of cases where `gerr` returned more than one gene-set.
+
+```{r verficateMt1}
+verifGerr %>%
+  unnest(res) %>%
+  group_by(gsSim) %>%
+  summarize(n_fp=sum(detected & gsSim!=gsTest)) %>%
+  count(n_fp)
+```
+
+
+
+First we implement the FET+FDR stratgy.
+
+```{r fetFdr}
+fetFdr <- function(goi, bgGenes, goi_name=NULL) {
+  goi <- uniqueNonNA(goi)
+  bgGenes <- uniqueNonNA(bgGenes)
+  bgDiffGoi <- setdiff(bgGenes, goi)
+  tm <- system.time(
+    fetRes <- imap_dfr(simGenesets, function(gs, gs_name) {
+      selHits <- length(intersect(gs, goi))
+      nonselHits <- length(goi) - selHits
+      selNonhits <- length(gs) - selHits
+      nonselNonhits <- length(bgDiffGoi) - selNonhits
+      mat <- matrix(c(selHits, nonselHits, selNonhits, nonselNonhits),2,2)
+      pval <- stats::fisher.test(mat, alternative = "greater")$p.value
+      list(gsTest=gs_name,
+           p_value=pval)
+  }) %>%
+    mutate(p_adj=p.adjust(p_value, "BH"),
+           detected=p_adj<fdr_thr)
+  )
+  tibble(
+    gsSim=goi_name,
+    time=tm['elapsed'],
+    method='FET',
+    res=list(fetRes)
+  )
+}
+```
+
+Next we run the verification step using FET+FDR.
+
+```{r fetFdrVerif, cache=TRUE}
+fisherVerif <- Q(fetFdr,
+                 goi=simGenesets,
+                 goi_name=names(simGenesets),
+                 bgGenes=list(bgGenes),
+                 pkgs=c('tidyverse'),
+                 export=list(uniqueNonNA=uniqueNonNA,
+                             simGenesets=simGenesets,
+                             fdr_thr=fdr_thr),
+                 n_jobs=10
+) %>%
+    bind_rows()
+```
+
+
+
+Perform the same with topGO
+```{r topGOEstimate, message=FALSE, cache=TRUE}
+tgData <- new(
+  'topGOdata',
+  description = 'simluation',
+  ontology = 'BP',
+  nodeSize=1,
+  allGenes = bgGenes %in% simGenesets[[1]] %>%
+  as.integer %>%
+  set_names(bgGenes) %>%
+  as.factor(),
+  annot = annFUN.GO2genes,
+  GO2genes=simGenesets
+)
+
+
+topgo_methods <- c('classic', 'elim', 'weight', 'weight01', 'lea', 'parentchild')
+
+estimate_topgo <- function(gs, tgData, method) {
+  data <- updateGenes(
+    tgData,
+    bgGenes %in% gs %>%
+      as.integer %>%
+      set_names(bgGenes) %>%
+      factor(levels=c(0, 1)))
+  tm <- system.time(
+    test_res <- runTest(data,
+                        algorithm=method,
+                        statistic="fisher")
+  )
+  p_value <- score(test_res)
+  tibble(
+    method=method,
+    time=tm['elapsed'],
+    res=list(tibble(
+      gsTest=names(p_value),
+      p_value=p_value
+      ) %>%
+        filter(gsTest != root) %>%
+        mutate(p_adj=p.adjust(p_value, method='BH'),
+       detected=p_adj < fdr_thr)
+    )
+  )
+}
+
+
+
+topgo_results <- map_dfr(topgo_methods, function(method)
+  Q(estimate_topgo,
+    gs=simGenesets,
+    tgData=list(tgData),
+    method=method,
+    pkgs=c('tidyverse', 'topGO'),
+    export=list(bgGenes=bgGenes,
+                root=root,
+                fdr_thr=fdr_thr),
+    n_jobs=150
+  ) %>%
+    set_names(names(simGenesets)) %>%
+    bind_rows(.id='gsSim')
+)
+```
+
+
+Summarize time used by different methods.
+```{r}
+all_verif <- topgo_results %>%
+  bind_rows(verifGerr) %>%
+  bind_rows(fisherVerif)
+
+all_verif %>%
+  group_by(method) %>%
+  summarize(time=sum(time))
+  
+```
+
+
+Summarize FPR and TPR.
+
+```{r}
+all_verif %>%
+  unnest(res) %>%
+  group_by(method) %>%
+  summarize(
+    fpr=sum(detected & (gsSim!=gsTest))/sum(gsSim!=gsTest),
+    tpr=sum(detected & (gsSim==gsTest))/sum(gsSim==gsTest)
+  )
+```
+
+Compare topGO in fischer mode with FET+FDR.
+
+```{r}
+all_verif %>%
+  filter(method %in% c('classic', 'FET')) %>%
+  unnest(res) %>%
+  select(gsSim, gsTest, method, p_adj) %>%
+  spread(method, p_adj) %>%
+  mutate(diff=abs(classic-FET)) %>%
+  {summary(.$diff)}
+```
+
+
+We first compare the number of false-positive hits of both methods.
+
+```{r verifFp, fig.width=4, fig.height=3}
+all_verif %>%
+  unnest(res) %>%
+  group_by(method, gsSim) %>%
+  summarize(fp=sum(gsSim!=gsTest & detected)) %>%
+  ggplot(aes(fp, col=method)) +
+  geom_freqpoly() +
+  xlab("False-positive hits") +
+  ylab("Gene-set count") +
+  theme(axis.text.x=element_text(angle = 0))
+
+```
+
+The `gerr` returned smaller number of false-positive.
+
+We believe that the false-positive hits of `gerr` are likely caused by redundancy in gene-sets. Therefore we show below the mean overlap coefficient between false-positive and true-positive hits returned by `gerr`. As a comparison, we show the value also for hits returned by FET+FDR and for randomly selected gene-sets.
+
+```{r verificateMt1Oe, fig.height=3, fig.width=4}
+all_verif %>%
+  unnest(res) %>%
+  filter(method=='classic') %>%
+  mutate(detected=TRUE, method='all') %>%
+  bind_rows(all_verif %>% unnest(res)) %>%
+  left_join(simPairwiseOverlap) %>%
+  filter((gsSim != gsTest) & detected) %>%
+  ggplot(aes(overlap, col=method)) +
+  geom_density() +
+  scale_y_sqrt() +
+  scale_colour_brewer(palette = "Set1")
+```
+
+
+In short, with a very simple verification procedure, we verify that by using `gerr`, all gene-sets that were assigned as genes of interest were successfully recovered. In most cases, the only gene-set selected by `gerr` was the true positive hit. In other cases, more than one gene-set was selected by `gerr`. The co-selected gene-sets are highly redudant with the true positive hit.
+
+
+# Simulations based on a probabilistic model
+
+Next we test the performance of `gerr` using a probabilistic framework. Specifically, we assume a generative model of GOI in the following form: $$p_{g \in G} = \sum_{\omega} p_{g|\omega}p_{\omega} + p_{g_{n}}$$.
+
+The model specifies that the probability that a gene $g$ is a member of the set $G$ is modelled by the probability of the gene-set $\omega$ contributes to GOI, expressed as $p_{\omega}$, multiplied by the probability that $g$ is selected to contributed to GOI given that $\omega$ contributes to GOI, summed over all genet-sets, and then adding the term $p_{g_{n}}$ that models the probability that the gene $g$ contributes to GOI independent of its associations with gene-sets. The two parts on the right side of the equation can be observed as a gene-set dependent and a noise term (therefore the subscript $n$) respectively. Apparently, $p_{g \in G}$ should be located between $[0,1]$. 
+
+In the following simulations, we assume that $p_{\omega}$ follows a binomial distribution that is specified by the parameter $p_{gs}$. For simplicity, we model $p_{g|\omega}$ as a binomial distribution specified by the parameter $p_{g}$ and assume that the same parameter applies to all selected gene-sets. Furthermore, we assume that $p_{g_{n}}$ is modelled by a small number $p_n$ that varies in a given range, e.g. from $10^{-4}$ to $10^{-1}$, and the value applies to all genes.
+
+The simulation procedure can be described in following steps:
+
+1. Randomly sample $k$ gene-sets from $\Omega$, the set of gene-sets, with the probability of $p_{gs}$.
+2. Within each $k$ gene-sets, randomly select $m$ genes each with the probability of $p_{g}$.
+3. Randomly sample genes from the background $B$ by a uniform distribution with the parameter $p_n$.
+4. Merge genes selected in step (2) and (3) into a set of GOI.
+5. Perform the `gerr` and `topGO` analysis with $G$ and $\Omega$ as input
+6. Assess the specificity and sensitivity of all the methods.
+
+The codes below implement the logic.
+
+```{r probSimulation}
+probSim <- function(p_gs=0.01, p_g=0.5, p_n=1E-3, seed=1L) {
+  set.seed(seed)
+  ## step 1
+  gsSel <- rbinom(n=length(simGenesets), size=1, prob=p_gs) == 1
+  gsSelNames <- names(simGenesets)[gsSel]
+  ## step 2
+  gsGenes <- lapply(simGenesets[gsSel], function(genes) {
+    selGenes <- rbinom(n=length(genes), size=1, prob=p_g)
+    res <- genes[selGenes==1]
+    return(res)
+  })
+  ## step 3
+  isNoiseGenes <- rbinom(n=length(bgGenes), size=1, prob=p_n) == 1
+  noiseGenes <- bgGenes[isNoiseGenes]
+  ## step 4
+  tibble(
+    goi=list(unique(c(unlist(gsGenes), noiseGenes))),
+    gs=list(gsSelNames)
+  )
+}
+
+
+estimate <- function(goi) {
+  ## step 5
+  map_dfr(topgo_methods,
+          ~estimate_topgo(goi, tgData, .x)) %>%
+    bind_rows(
+      estimate_gerr(goi, gsMatrix)
+    )
+}
+
+
+
+compute_performance <- function(gs, res) {
+  ## step 6
+  res <- res %>%
+    mutate(sim=gsTest %in% gs) 
+  
+  perf <- res %>%
+    summarize(
+      tpr=sum(sim&detected)/sum(sim),
+      fpr=sum(detected&!sim)/sum(!sim),
+      ppv=sum(sim&detected)/sum(detected),
+      f1=2*ppv*tpr/(ppv+tpr)
+  )
+
+  fp <- res %>%
+    filter(!sim & detected) %>%
+    pull(gsTest)
+
+  perf$maxOe <- simPairwiseOverlap %>%
+    filter(gsSim %in% gs & gsTest %in% fp) %>%
+    summarize(maxOe=max(overlap)) %>%
+    pull(maxOe)
+  
+  perf
+}
+
+
+estimate_and_performance <- function(df) {
+  df %>%
+    rowwise() %>%
+    mutate(est=list(estimate(goi))) %>%
+    unnest(est, .drop=FALSE) %>%
+    rowwise() %>%
+    mutate(perf=list(compute_performance(
+      gs,
+      res))) %>%
+  unnest(perf)
+}
+```
+
+
+## A small-scale simulation with the probabilistic model
+
+For instance, below we example the results of the particular simulation setting.
+
+```{r testProbSim, message=FALSE, cache=TRUE}
+testSim <- probSim(p_gs=0.05, p_g=0.5, p_n=1E-3) %>%
+  estimate_and_performance()
+
+testSim %>%
+  select(method, time, tpr, fpr, ppv, f1, maxOe)
+```
+
+The results can be interpreted as follows.
+
+## A full scale simulation with the probabilistic model and results interpretation
+
+Below we perform the full-scale simulation with the probabilistic model, using a variety of combinations of the parameters $p_{gs}$, $p_g$, and $p_n$. For each parameter set, five independent simulations are run. 
+
+```{r fullProbSim, cache=TRUE}
+p_gs_cand <- c(0.002, 0.005, 0.01,
+               seq(0.02, 0.1, by=0.01))
+p_g_cand <- c(0.05, seq(0.1, 1, by=0.1))
+p_n_cand <- c(0, 1E-4, 1E-3, 1E-2, 5E-2, 1E-1)
+
+probSimParamsOneRep <- expand.grid(p_gs=p_gs_cand,
+  p_g=p_g_cand,
+  p_n=p_n_cand) %>%
+  ## five replicates per condition
+  slice(rep(1:n(), each = 5)) %>%
+  mutate(seed=1:n())
+```
+
+Run full simulations
+```{r, cache=TRUE}
+full_sim <- probSimParamsOneRep %>%
+  rowwise() %>%
+  mutate(
+    sim=list(probSim(p_gs=p_gs, p_g=p_g, p_n=p_n, seed=seed))
+    ) %>%
+  unnest(sim) %>%
+  rowwise() %>%
+  filter(length(goi) > 3)
+```
+
+Estimate gene sets.
+```{r message=FALSE, cache=TRUE}
+# this is quite slow
+full_sim_res <- Q(
+  function(i) estimate_and_performance(full_sim[i,]),
+  i=1:nrow(full_sim),
+  pkgs=c('tidyverse', 'gerr', 'topGO'),
+  export=list(
+    bgGenes=bgGenes,
+    tgData=tgData,
+    gsMatrix=gsMatrix,
+    full_sim=full_sim,
+    simPairwiseOverlap=simPairwiseOverlap,
+    topgo_methods=topgo_methods,
+    estimate_and_performance=estimate_and_performance,
+    compute_performance=compute_performance,
+    estimate=estimate,
+    estimate_gerr=estimate_gerr,
+    estimate_topgo=estimate_topgo,
+    root=root,
+    fdr_thr=fdr_thr
+  ),
+  n_jobs=500
+) %>%
+  bind_rows()
+```
+
+
+
+Due to the stochastic nature of sampling, in some runs no gene-set is selected at all to contribute to GOI, especially when $p_{gs}$ is set small. These cases are excluded from the analysis below, because they will distort the results. Including them however do not change the conclusions.
+
+The median values of the five simulation runs are reporteed for each measure (true-positive rate, false-positive rate, *etc.*). 
+
+```{r avgProbSimRes}
+full_sim_res_agg <- full_sim_res %>%
+  filter(!is.na(f1)) %>%
+  select(p_gs, p_g, p_n, method, tpr, fpr, ppv, f1) %>%
+  group_by(p_gs, p_g, p_n, method) %>%
+  summarise_all(median) %>%
+  mutate(m_fpr=1-fpr)
+```
+
+# Interpretation of the simulation results
+
+We investigate the simulation results by visualizing true positive rate, false positive rate, and $F_{1}$ scores of the `gerr` and FET+FDR procedure.
+
+## Sensitivity, or true positive rate (TPR)
+
+The plot below visualizes how sensitivity, or true positive rate (TPR) varies by the probability that each gene-set contributes to GOI ($p_{gs}$) and the probability of genes in each gene-set contribute to GOI ($p_g$), conditional on the noise probability $p_n$. Five independent simulations were performed for each parameter set, and the median value is used for visualization.
+
+```{r tprGerr, fig.width=7.5, fig.height=5}
+lowCol <- "#004495"
+midCol <- "#CCCCCC"
+highCol <- "#AA3555"
+theme_update(axis.text.x = element_text(angle=45, hjust=1),
+        axis.text = element_text(size=11),
+        axis.title = element_text(size=14),
+        strip.text = element_text(size=11),
+        legend.text = element_text(size=11))
+
+plot_stat <- function(res, m, stat, label, name) res %>%
+  filter(method==m) %>%
+  ggplot(aes(x=factor(p_gs), y=factor(p_g), fill=!!sym(stat))) +
+  facet_wrap(~p_n, labeller = label_both) +
+  geom_tile() +
+  scale_fill_gradient2(low=lowCol, mid=midCol, high=highCol, 
+                       midpoint=0.5,
+                       limits=c(0,1),
+                       oob=scales::squish,
+                       name=label) +
+  ggtitle(str_c(name, " of ", m))+
+  xlab(expression(p[gs])) + ylab(expression(p[g]))
+
+plot_stat(full_sim_res_agg, 'gerr', 'tpr', 'TPR', 'True positive rate')
+```
+
+It seems that `gerr` in general has high sensitivity, even when the noise probabiliy is as high as 0.1 (namely each gene has the probability of $0.1$ to be selected as a gene of interest, independent whether it is associated with any gene-set or not). The sensitivity is only low when very few genes in the gene-set contribute to GOI (say less than 10%), which makes sense intuitively.
+
+The cell $p_{gs}=0.002, p_{g}=0.5, and p_{n}=0.05$ is missing because in five runs of simulation, the sampling procedure did not pick any gene-set to contribute to contribute to GOI.
+
+The plot below visualizes the pattern of TPR in case of the FET+FDR procedure.
+
+```{r tprFF, fig.width=7.5, fig.height=5}
+walk(topgo_methods, ~print(plot_stat(
+  full_sim_res_agg, 
+  .,
+  'tpr',
+  'TPR',
+  'True positive rate')))
+```
+
+The difference of TPR between `gerr` and `FET+FDR` of matching parameter set is visualized by the plot below.
+
+```{r tprGerrVsFF, fig.width=7.5, fig.height=5}
+diffLowCol <- "#E6AB02"
+diffMidCol <- "#CCCCCC"
+diffHighCol <- "#4DAF4A"
+
+plot_diff <- function(res, m, stat, label, name) res %>%
+  filter(method %in% c(m, 'gerr')) %>%
+  select(p_gs, p_g, p_n, method, !!sym(stat)) %>%
+  spread(method, !!sym(stat)) %>%
+  mutate(diff=gerr-!!sym(m)) %>%
+  ggplot(aes(x=factor(p_gs), y=factor(p_g), fill=diff)) +
+  facet_wrap(~p_n, labeller = label_both) +
+  geom_tile() +
+  scale_fill_gradient2(low=diffLowCol, mid=diffMidCol, high=diffHighCol, midpoint=0,
+                       limits=c(-0.5, 0.5), oob=scales::squish,
+                       name=bquote(Delta~.(label))) +
+  theme(axis.text.x = element_text(angle=45, hjust=1)) +
+  ggtitle(str_glue("{name} difference (gerr - {m})", name=name, m=m)) +
+  xlab(expression(p[gs])) + ylab(expression(p[g]))
+
+
+walk(topgo_methods, ~print(plot_diff(
+  full_sim_res_agg,
+  .,
+  'tpr',
+  'TPR',
+  'True positive rate')))
+```
+
+It seems that when $p_{g}$, the probability of genes in a gene-set to contribute to GOI, is low, and when the noise ($p_{n}$) is strong, `gerr` has higher sensitivity (true-positive rate) than FET+FDR. Otherwise, when $p{g}$ is high, both `gerr` and FET+FDR has high sensitivity that is near 1.
+
+## Specificity, or 1-false positive rate (FPR)
+
+Next we examine specificity, which equals 1-false-positive rate First, we visualize the variation precision of `gerr` by varying parameters.
+
+```{r fprGerr, fig.width=7.5, fig.height=5}
+plot_stat(full_sim_res_agg, 'gerr', 'm_fpr', '1-FPR',
+          'False positive rate')
+```
+
+The specificity of `gerr` seems quite robust against the choice of $p_{n}$. It decreases when $p_{gs}$ is high, namely when many gene-sets contribute to GOI. Likely it is because of calling other gene-sets that are partially redundant as false-positive hits, as shown in the previous verification step.
+
+Next we reveal how FPR change in the case of FET+FDR.
+
+```{r fprFF, fig.width=7.5, fig.height=5}
+walk(topgo_methods, ~print(plot_stat(
+  full_sim_res_agg,
+  .,
+  'm_fpr',
+  '1-FPR',
+  'False positive rate')))
+```
+
+The plot below visualizes the difference of FPR.
+
+```{r fprDiff, fig.height=5, fig.width=7.5}
+walk(topgo_methods, ~print(plot_diff(
+  full_sim_res_agg,
+  .,
+  'm_fpr',
+  '1-FPR',
+  'False positive rate')))
+```
+
+We observe that when $p_{g}$ is low, FET+FDR has slightly lower FPR than `gerr` (on the cost of having slightly lower sensitivty). Otherwise, gerr has much lower false-positive rate than the FET+FDR procedure. The higher $p_{gs}$ and $p_{g}$ values are, the stronger are the difference in favor of `gerr`.
+
+## $F_1$ score
+
+$F_1$ score is the harmonic mean of precision and sensitivity and therefore a good measure of balanced performance. Below we visualize the $F_1$ score of `gerr` results.
+
+```{r f1Gerr, fig.width=7.5, fig.height=5}
+plot_stat(full_sim_res_agg, 'gerr', 'f1', 'F1', 'F1 score')
+```
+
+It seems that $F_{1}$ score of `gerr` in quite robust against $p_n$, as long as $p_{gs}$ and $p_{g}$ is reasonably high.
+
+Next we visualize the $F_1$ scores of the FET+FDR procedure.
+
+```{r f1FF, fig.width=7.5, fig.height=5}
+walk(topgo_methods, ~print(plot_stat(
+  full_sim_res_agg,
+  .,
+  'f1',
+  'F1',
+  'F1 score')))
+```
+
+Next we calculate the difference of $F_1$ scores.
+
+```{r f1Diff, fig.width=7.5, fig.height=5}
+walk(topgo_methods, ~print(plot_diff(
+  full_sim_res_agg,
+  .,
+  'f1',
+  'F1',
+  'F1 score')))
+```
+
+We observe that $F_1$ score, which combines precision ($TP/(TP+FP)$) and sensitivity (TPR), of FET+FDR is higher when few gene-sets are selected to construct GOI; otherwise, the score of `gerr` is higher. This is because when only few gene-sets are selected, `gerr` tend to find other gene-sets that are partially overlapping with the true positive hits, therefore its precision can be lower. Though as discussed before, this does not necessarily mean that the results of `gerr` is inferior, since the partially redundant gene-sets may be of interest under circumstances. Otherwise, when $p_{gs}$ is reasonably high (above 0.01), $F_1$ score of `gerr` is generally higher than FET+FDR. Namely when not few gene-sets contribute to GOI, and when many genes of selected gene-sets are chosen to construct GOI, `gerr` outperforms FET+FDR by $F_1$ score.
+
+# R session info
+
+```{r session}
+sessionInfo()
+```

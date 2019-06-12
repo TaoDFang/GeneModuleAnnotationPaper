@@ -1,0 +1,11 @@
+#!/bin/sh
+#SBATCH --job-name={{ job_name }}
+#SBATCH --partition=defq
+#SBATCH --output={{ log_file | logs/out.%a }} # you can add .%a for array index
+#SBATCH --error={{ log_file | logs/err.%a }}
+#SBATCH --mem-per-cpu={{ memory | 4000 }}
+#SBATCH --time={{ time | 03:00:00}}
+#SBATCH --array=1-{{ n_jobs }}
+##module load R
+ulimit -v $(( 1024 * {{ memory | 4000 }} ))
+CMQ_AUTH={{ auth }} R --no-save --no-restore -e 'clustermq:::worker("{{ master }}")'
