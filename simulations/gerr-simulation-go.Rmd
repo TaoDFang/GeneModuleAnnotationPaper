@@ -405,7 +405,7 @@ estimate_topgo <- function(gs, tgData, method) {
 }
 ```
 
-```{r topGOestimate}
+```{r topGOestimate, cache=TRUE}
 topgo_results <- map_dfr(topgo_methods, function(method)
   Q(estimate_topgo,
     gs=simGenesets,
