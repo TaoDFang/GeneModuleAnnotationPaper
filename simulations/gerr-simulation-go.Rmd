@@ -498,6 +498,43 @@ all_verif %>%
   scale_color_brewer(palette = "Set1")
 ```
 
+We can also compute difference in frequencies.
+
+```{r verifDensDiff, fig.width=4, fig.height=5}
+max_fp <- all_verif %>%
+  unnest(res) %>%
+  group_by(method, gsSim) %>%
+  summarize(fp=sum(gsSim!=gsTest & detected)) %>%
+  ungroup() %>%
+  summarize(max_fp=max(fp)) %>%
+  pull(max_fp)
+
+dens_df <- all_verif %>%
+  unnest(res) %>%
+  group_by(method, gsSim) %>%
+  filter(method %in% c('elim', 'gerr', 'lea', 'weight', 'weight01')) %>%
+  summarize(fp=sum(gsSim!=gsTest & detected)) %>%
+  group_by(method) %>%
+  summarize(hist=list(hist(fp, plot=FALSE, breaks=seq(0, max_fp+1, 5)))) %>%
+  rowwise() %>%
+  mutate(hist=list(tibble(mids=hist$mids, density=hist$density))) %>%
+  unnest(hist)
+
+filter(dens_df, method=='gerr') %>%
+  select(-method) %>%
+  rename(density_gerr=density) %>%
+  left_join(filter(dens_df, method!='gerr')) %>%
+  mutate(method=str_c('frequency(gerr) - frequency(', method, ')')) %>%
+  mutate(diff_density=density_gerr-density) %>%
+  ggplot(aes(mids, diff_density, col=method)) +
+  geom_line(size=0.5) +
+  labs(x='Difference in frequency', y='Number of false positives') +
+  scale_color_brewer(palette = "Set1") +
+  theme(legend.position="bottom",
+        legend.direction="vertical")
+```
+
+
 The `gerr` has the largest peak on the left, confirming low false positive rate observed before.
 
 We believe that the false-positive hits of `gerr` are likely caused by redundancy in gene-sets. Therefore we show below the mean overlap coefficient between false-positive and true-positive hits returned by `gerr`. As a comparison, we show the value also for hits returned by FET+FDR and for all gene-sets.
