@@ -8,6 +8,9 @@ glmnet_Document
 code
 CreateBioconductorRPackage_Pipeline.md
 simulations/logs
+# outputs of simulations
+simulations/*.pdf
+simulations/*.html
 # temporary files produced by rmarkdown rendering
 *_cache/
 *_files/
