@@ -21,8 +21,26 @@ fdr_thr <- 0.05
 
 For methods implemented in `topGO` we will use Benjamini & Hochberg (1995) $p$-value correction with the FDR threshold of `r fdr_thr`.
 
-```{r setup, include=FALSE}
+```{r setupClustermq, include=FALSE}
+# there should be a logs folder,
+# otherwise job submission will fail silently
 dir.create('logs')
+library(clustermq)
+options(clustermq.scheduler='slurm', clustermq.template='slurm_clustermq.tmpl')
+
+# In order to make this work
+# you need to have zeromq installed
+
+# if you want to run this from Rstudio on the Roche cluster:
+# 1. Login into hpc.
+# 2. Run:
+#    $ ml purge
+#    $ ml zeromq
+#    $ ml save webportal rstudio
+# 3. Restart your Rstudio session.
+```
+
+```{r setup, include=FALSE}
 library(gerr)
 library(glmnet)
 library(MASS)
@@ -30,8 +48,6 @@ library(stats)
 library(gridExtra)
 library(topGO)
 library(graph)
-library(clustermq)
-options(clustermq.scheduler='slurm', clustermq.template='slurm_clustermq.tmpl')
 library(tidyverse)
 theme_set(theme_bw())
 ```  
