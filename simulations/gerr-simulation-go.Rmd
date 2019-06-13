@@ -36,7 +36,7 @@ options(clustermq.scheduler='slurm', clustermq.template='slurm_clustermq.tmpl')
 # 2. Run:
 #    $ ml purge
 #    $ ml zeromq
-#    $ ml save webportal rstudio
+#    $ ml save webportal-rstudio
 # 3. Restart your Rstudio session.
 ```
 
