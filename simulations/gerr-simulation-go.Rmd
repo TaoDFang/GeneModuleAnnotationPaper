@@ -511,8 +511,7 @@ all_verif %>%
   left_join(simPairwiseOverlap) %>%
   filter((gsSim != gsTest) & detected) %>%
   ggplot(aes(overlap, col=method)) +
-  geom_freqpoly() +
-  #scale_y_sqrt() +
+  geom_freqpoly(size=1) +
   scale_color_brewer(palette = "Set1") +
   facet_wrap(~method, ncol=1, scales='free_y') +
   theme(strip.background = element_blank(),
