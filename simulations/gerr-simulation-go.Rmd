@@ -230,7 +230,7 @@ In the code chunk below, we verify that the model works in the sense that the ge
 
 Since the analysis is computationally intensive, we use `clustermq` package and the `Q` function to parallelize computations on a cluster.
 
-```{r smallVeri, cache=TRUE}
+```{r smallVeri, cache=TRUE, message=FALSE}
 set.seed(2)
 selInd <- sample(seq(along=simGenesets), 10)
 selGsName <- names(simGenesets)[selInd]
@@ -247,7 +247,9 @@ selRes <- Q(function(i, goi, gsMatrix)
   n_jobs=10,
   export=list(regression_selected_pathways=regression_selected_pathways)
 )
+```
 
+```{r smallVerRes}
 foundCounts <- sapply(seq(along=selInd), 
                       function(i) length(selRes[[i]][[1]]))
 isRecovered <- sapply(seq(along=selInd), 
@@ -289,7 +291,7 @@ runGerr <- function(genesets, gsMatrix, index) {
 ```
 
 
-```{r verificateAll, cache=TRUE}
+```{r verificateAll, cache=TRUE, message=FALSE}
 verifGerr <- Q(runGerr,
   index=seq_along(simGenesets),
   genesets=list(simGenesets),
@@ -357,7 +359,7 @@ fetFdr <- function(goi, bgGenes, goi_name=NULL) {
 
 Next we run the verification step using FET+FDR.
 
-```{r fetFdrVerif, cache=TRUE}
+```{r fetFdrVerif, cache=TRUE, message=FALSE}
 fisherVerif <- Q(fetFdr,
                  goi=simGenesets,
                  goi_name=names(simGenesets),
@@ -421,7 +423,7 @@ estimate_topgo <- function(gs, tgData, method) {
 }
 ```
 
-```{r topGOestimate, cache=TRUE}
+```{r topGOestimate, cache=TRUE, message=FALSE}
 topgo_results <- map_dfr(topgo_methods, function(method)
   Q(estimate_topgo,
     gs=simGenesets,
