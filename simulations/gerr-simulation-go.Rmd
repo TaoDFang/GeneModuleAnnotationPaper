@@ -271,7 +271,8 @@ estimate_gerr <- function(gs, gsMatrix) {
   tm <- system.time(
     res <- regression_selected_pathways(
       gene_input=gs,
-      gene_pathway_matrix = gsMatrix)
+      gene_pathway_matrix = gsMatrix,
+      verbose=FALSE)
     )
     tibble(
       method='gerr',
