@@ -685,8 +685,6 @@ testSim %>%
   select(method, time, tpr, fpr, ppv, f1, median_overlap, min_overlap)
 ```
 
-The results can be interpreted as follows. `gerr` has high true positive rate, the highest positive predictive value, and the highest $F_1$ score.
-
 ## A full scale simulation with the probabilistic model and results interpretation
 
 Below we perform the full-scale simulation with the probabilistic model, using a variety of combinations of the parameters $p_{gs}$, $p_g$, and $p_n$. For each parameter set, five independent simulations are run. 
@@ -748,6 +746,14 @@ full_sim_res <- Q(
   bind_rows()
 ```
 
+Summary of the simulations.
+
+```{r fullSimResSummary}
+full_sim_res %>%
+  select(method, time, tpr, fpr, ppv, f1, median_overlap) %>%
+  group_by(method) %>%
+  summarize_all(median, na.rm=TRUE)
+```
 
 The median values of the five simulation runs are reported for each measure (true-positive rate, false-positive rate, *etc.*). 
 
