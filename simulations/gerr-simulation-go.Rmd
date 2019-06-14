@@ -378,7 +378,7 @@ fisherVerif <- Q(fetFdr,
 
 Perform the same with topGO. Note that topGO implements several strategies to reduce the graph redundancy. We try all the methods implemented. The `classic` method is exactly identical to FET+FDR after propagation of terms along the GO-graph.
 
-```{r topGOEfunctions, message=FALSE, cache=TRUE}
+```{r topGOEfunctions, message=FALSE}
 # we create this object and reuse it later
 tgData <- new(
   'topGOdata',
