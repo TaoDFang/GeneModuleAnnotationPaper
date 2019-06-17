@@ -1,5 +1,5 @@
 ---
-title: "Gene-set enrichment with regularized regression: simulation studies wit GO"
+title: "Gene-set enrichment with regularized regression: simulation studies with Gene Ontology"
 author: "Iakov Davydov, Jitao David Zhang and Tao Fang"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output: 
@@ -13,7 +13,11 @@ output:
 
 In the manuscript *Gene-set Enrichment with Regularized Regression* (`gerr` in short), we propose using regularized regression to model the relationship between $Y$, a dichotomous dependent variable indicating membership of genes in a set of genes of interest (GOI hereafter), and $\Omega$, a matrix of dichotomous variables indicating membership of genes in gene-sets that are potentially overlapping or even identical with each other.
 
-In this document, we perform simulation studies to demonstrate the sensitivity and specificity of the `gerr` method, using the software package of the same name that we published along with the manuscript and the elastic net implemented in the R software package `glmnet`. We compare results produced by `gerr` with the results of the `topGO` package. Throughout the analysis, we will use the default parameters of `gerr`, using the elastic net of Gaussian-family linear regression, with $\alpha=0.5$.
+While `gerr` makes no explicit assumptions about the structure of the gene-set collection, some gene-sets are derived from tree-like structures. A prominent example is Gene Ontology (GO). Methods, for instance the `topGO` package in Bioconductor, has been developed to take advantage of the tree-like structure to decorrelate gene-sets. It is not known how a method `gerr`, which is agonistic about gene-set structure, performes in comparison with methods that take tree-like structures into account. 
+
+In this document, we perform simulation studies to demonstrate the sensitivity and specificity of the `gerr` method, using the software package of the same name that we published along with the manuscript and the elastic net implemented in the R software package `glmnet`. We compare results produced by `gerr` with the results of the `topGO` package. 
+
+Throughout the analysis, we will use the default parameters of `gerr`, using the elastic net of Gaussian-family linear regression, with $\alpha=0.5$.
 
 ```{r fdr_thr, include=FALSE}
 fdr_thr <- 0.05
@@ -55,9 +59,9 @@ theme_set(theme_bw())
 
 # Gene-sets used for simulations
 
-We wish to use real-world gene-sets that are commonly used by the community for the simulation study for `gerr`, because synthesized gene-sets may have distributions of sizes, defined by the number of unique genes and overlapping patterns that depart from real-world gene-sets. In this simulation we use a random subset of Gene Ontology Biological process annotation.
+We wish to use real-world gene-sets that are commonly used by the community for the simulation study for `gerr`, because synthesized gene-sets may have distributions of sizes, defined by the number of unique genes and overlapping patterns, that depart from real-world gene-sets. In this simulation we use a randomly selected subset of Gene Ontology Biological process annotation.
 
-When performing GO-enrichment, usually GO-terms propagated from child nodes to their parents. In the code below we select random subset of GO-categories and propagate them up to the root of the tree. This way the number of GO-terms tested will be larger than the number of terms chosen.
+When performing GO enrichment, usually GO-terms are propagated from child nodes to their parents. In the code below we select random subset of GO-categories and propagate them up to the root of the tree. In this way the number of GO-terms tested will be larger than the number of terms chosen.
 
 ```{r gmt}
 # extract GO graph
@@ -218,7 +222,7 @@ simPairwiseOverlap <- columnOverlapCoefficient(gsMatrix) %>%
 
 ```
 
-There is substantial overlap between genes. The peak on the right is most probably related to child-parent relationships. Note that because of high overlap it is unlikely that any of the methods will reliably distinguish with such GO-terms.
+There is substantial overlap between genes. The peak on the right is most probably related to child-parent relationships. Note that because of high overlap it is unlikely that any methods will reliably distinguish with such GO-terms.
 
 # Model verification
 
@@ -305,9 +309,7 @@ verifGerr <- Q(runGerr,
   bind_rows()
 ```
 
-
-
-We first confirm that each gene-sets used as a GOI was successfully rediscovered by `gerr`.
+We first confirm that each gene-set used as a GOI was successfully rediscovered by `gerr`.
 
 ```{r verficateRes}
 verifGerr %>%
@@ -325,8 +327,6 @@ verifGerr %>%
   summarize(n_fp=sum(detected & gsSim!=gsTest)) %>%
   count(n_fp)
 ```
-
-
 
 Now we implement the FET+FDR strategy.
 
@@ -374,9 +374,7 @@ fisherVerif <- Q(fetFdr,
     bind_rows()
 ```
 
-
-
-Perform the same with topGO. Note that topGO implements several strategies to reduce the graph redundancy. We try all the methods implemented. The `classic` method is exactly identical to FET+FDR after propagation of terms along the GO-graph.
+Next, we perform the same analysis with topGO. Note that topGO implements several strategies to reduce the graph redundancy. We try all the methods implemented. The `classic` method is exactly identical to FET+FDR after propagation of terms along the GO-graph.
 
 ```{r topGOEfunctions, message=FALSE}
 # we create this object and reuse it later
@@ -441,8 +439,8 @@ topgo_results <- map_dfr(topgo_methods, function(method)
 )
 ```
 
+Next, we summarize the running time of different methods.
 
-Summarize time used by different methods.
 ```{r timeUsed}
 all_verif <- topgo_results %>%
   bind_rows(verifGerr) %>%
@@ -453,10 +451,9 @@ all_verif %>%
   summarize(time=sum(time))
 ```
 
-
 The fastest method is FET+FDR. Probably because we preprocessed the GO-graph once prior to analysis. `gerr` is the slowest method in our comparison.
 
-Summarize FPR and TPR.
+Below we summarize false-positive rate (FPR) and true-positive rate (TPR).
 
 ```{r verifFPRTPR}
 all_verif %>%
@@ -501,7 +498,7 @@ all_verif %>%
         strip.text.x = element_blank())
 ```
 
-We see that number of false positives is high in the following methods: `classic` (aka `FET`) and `parentchild`. We remove those and zoom in on the rest.
+We see that number of false positives is high in the following methods: `classic` (aka `FET`) and `parentchild`. We remove those and focus on the rest.
 
 ```{r verifFpzoom, fig.width=4, fig.height=3}
 all_verif %>%
@@ -556,7 +553,7 @@ filter(dens_df, method=='gerr') %>%
 
 The `gerr` has the largest peak on the left, confirming low false positive rate observed before.
 
-We believe that the false-positive hits of `gerr` are likely caused by redundancy in gene-sets. Therefore we show below the mean overlap coefficient between false-positive and true-positive hits returned by `gerr`. As a comparison, we show the value also for hits returned by FET+FDR and for all gene-sets.
+We believe that the false-positive hits of `gerr` are likely caused by redundancy in gene-sets. To show that, we illustrate below the mean overlap coefficient between false-positive and true-positive hits returned by `gerr`. As a comparison, we show the value also for hits returned by FET+FDR and for all gene-sets.
 
 ```{r verificateMt1Oe, fig.height=6, fig.width=4}
 all_verif %>%
@@ -574,9 +571,7 @@ all_verif %>%
         strip.text.x = element_blank())
 ```
 
-
 In short, with a very simple verification procedure, we verify that by using `gerr`, all gene-sets that were assigned as genes of interest were successfully recovered. In most cases, the only gene-set selected by `gerr` was the true positive hit. In other cases, more than one gene-set was selected by `gerr`. The co-selected gene-sets are highly redundant with the true positive hit.
-
 
 # Simulations based on a probabilistic model
 
@@ -705,7 +700,7 @@ probSimParamsOneRep <- expand.grid(p_gs=p_gs_cand,
 
 Due to the stochastic nature of sampling, in some runs no gene-set is selected at all to contribute to GOI, especially when $p_{gs}$ is set small. These cases are excluded from the analysis below, because they will distort the results. Including them however do not change the conclusions.
 
-Run full simulations.
+Below we run the full simulation.
 
 ```{r fullSim, cache=TRUE}
 full_sim <- probSimParamsOneRep %>%
@@ -718,7 +713,7 @@ full_sim <- probSimParamsOneRep %>%
   filter(length(goi) > 3)
 ```
 
-Estimate gene sets. This is very slow.
+Next we estimate gene sets. Warning: this is *very* slow.
 
 ```{r fullEst, message=FALSE, cache=TRUE}
 # this is quite slow
@@ -746,7 +741,7 @@ full_sim_res <- Q(
   bind_rows()
 ```
 
-Summary of the simulations.
+Summary of the simulations is shown below.
 
 ```{r fullSimResSummary}
 full_sim_res %>%
@@ -802,7 +797,7 @@ plot_stat(full_sim_res_agg, 'gerr', 'tpr', 'TPR', 'True positive rate')
 
 It seems that `gerr` in general has high sensitivity, even when the noise probability is as high as 0.1 (namely each gene has the probability of $0.1$ to be selected as a gene of interest, independent whether it is associated with any gene-set or not). The sensitivity is only low when very few genes in the gene-set contribute to GOI (say less than 10%), which makes sense intuitively.
 
-The cell $p_{gs}=0.002, p_{g}=0.5, and p_{n}=0.05$ is missing because in five runs of simulation, the sampling procedure did not pick any gene-set to contribute to contribute to GOI.
+Some cells are missing because in five runs of simulation, the sampling procedure did not pick any gene-set to contribute to contribute to GOI.
 
 The plot below visualizes the pattern of TPR for other procedures.
 
@@ -816,6 +811,7 @@ walk(topgo_methods, ~print(plot_stat(
 ```
 
 Only the `classic` and `parentchild` methods have a high TPR.
+
 Below we visualize difference in TPR between `gerr` and other methods.
 
 ```{r tprDiff, fig.width=7.5, fig.height=5}
