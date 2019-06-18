@@ -759,6 +759,9 @@ full_sim_res_agg <- full_sim_res %>%
   group_by(p_gs, p_g, p_n, method) %>%
   summarise_all(median) %>%
   mutate(m_fpr=1-fpr)
+
+write_tsv(full_sim_res_agg,
+          'full_sim_results_aggregated.tsv.gz')
 ```
 
 # Interpretation of the simulation results
