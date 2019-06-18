@@ -1,8 +1,0 @@
-*.Rcache filter=lfs diff=lfs merge=lfs -text
-cache/664429f02312438028fa6a7b39fbe475.Rcache filter=lfs diff=lfs merge=lfs -text
-cache/6f6da30c18a3396cd86bc9979a786b4a.Rcache filter=lfs diff=lfs merge=lfs -text
-cache/8941a51c496864a624e7e29bc4d87ff4.Rcache filter=lfs diff=lfs merge=lfs -text
-cache/adb5652acfdace94dc163ad88f13ca22.Rcache filter=lfs diff=lfs merge=lfs -text
-cache/d86294a80a9dc4efa20ec0b0c76aa833.Rcache filter=lfs diff=lfs merge=lfs -text
-cache/dadf11d50cdd14dc1ee76508cd2a1e2d.Rcache filter=lfs diff=lfs merge=lfs -text
-cache/362572067de507c94a0cf17f76011a3d.Rcache filter=lfs diff=lfs merge=lfs -text
