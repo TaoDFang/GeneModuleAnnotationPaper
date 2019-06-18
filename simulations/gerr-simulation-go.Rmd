@@ -44,6 +44,11 @@ options(clustermq.scheduler='slurm', clustermq.template='slurm_clustermq.tmpl')
 # 3. Restart your Rstudio session.
 ```
 
+```{r setupCache, include=FALSE}
+library(R.cache)
+setCacheRootPath(file.path(getwd(), 'cache'))
+```
+
 ```{r setup, include=FALSE}
 library(gerr)
 library(glmnet)
@@ -234,14 +239,15 @@ In the code chunk below, we verify that the model works in the sense that the ge
 
 Since the analysis is computationally intensive, we use `clustermq` package and the `Q` function to parallelize computations on a cluster.
 
-```{r smallVeri, cache=TRUE, message=FALSE}
+```{r smallVeri, message=FALSE}
 set.seed(2)
 selInd <- sample(seq(along=simGenesets), 10)
 selGsName <- names(simGenesets)[selInd]
 selGs <- simGenesets[selInd]
 
 
-selRes <- Q(function(i, goi, gsMatrix)
+selRes <- evalWithMemoization(
+  Q(function(i, goi, gsMatrix)
   regression_selected_pathways(
     gene_input=goi,
     gene_pathway_matrix=gsMatrix),
@@ -250,6 +256,7 @@ selRes <- Q(function(i, goi, gsMatrix)
   gsMatrix=list(gsMatrix),
   n_jobs=10,
   export=list(regression_selected_pathways=regression_selected_pathways)
+  )
 )
 ```
 
@@ -296,17 +303,19 @@ runGerr <- function(genesets, gsMatrix, index) {
 ```
 
 
-```{r verificateAll, cache=TRUE, message=FALSE}
-verifGerr <- Q(runGerr,
-  index=seq_along(simGenesets),
-  genesets=list(simGenesets),
-  gsMatrix=list(gsMatrix),
-  export=list(
-    estimate_gerr=estimate_gerr
-    ),
-  pkgs=c('gerr', 'tidyverse'),
-  n_jobs=100) %>%
-  bind_rows()
+```{r verificateAll, message=FALSE}
+verifGerr <- evalWithMemoization(
+  Q(runGerr,
+    index=seq_along(simGenesets),
+    genesets=list(simGenesets),
+    gsMatrix=list(gsMatrix),
+    export=list(
+      estimate_gerr=estimate_gerr
+      ),
+    pkgs=c('gerr', 'tidyverse'),
+    n_jobs=100) %>%
+    bind_rows()
+)
 ```
 
 We first confirm that each gene-set used as a GOI was successfully rediscovered by `gerr`.
@@ -360,18 +369,20 @@ fetFdr <- function(goi, bgGenes, goi_name=NULL) {
 
 Next we run the verification step using FET+FDR.
 
-```{r fetFdrVerif, cache=TRUE, message=FALSE}
-fisherVerif <- Q(fetFdr,
-                 goi=simGenesets,
-                 goi_name=names(simGenesets),
-                 bgGenes=list(bgGenes),
-                 pkgs=c('tidyverse'),
-                 export=list(uniqueNonNA=uniqueNonNA,
-                             simGenesets=simGenesets,
-                             fdr_thr=fdr_thr),
-                 n_jobs=10
-) %>%
+```{r fetFdrVerif, message=FALSE}
+fisherVerif <- evalWithMemoization(
+  Q(fetFdr,
+    goi=simGenesets,
+    goi_name=names(simGenesets),
+    bgGenes=list(bgGenes),
+    pkgs=c('tidyverse'),
+    export=list(uniqueNonNA=uniqueNonNA,
+                simGenesets=simGenesets,
+                fdr_thr=fdr_thr),
+    n_jobs=10
+  ) %>%
     bind_rows()
+)
 ```
 
 Next, we perform the same analysis with topGO. Note that topGO implements several strategies to reduce the graph redundancy. We try all the methods implemented. The `classic` method is exactly identical to FET+FDR after propagation of terms along the GO-graph.
@@ -422,20 +433,22 @@ estimate_topgo <- function(gs, tgData, method) {
 }
 ```
 
-```{r topGOestimate, cache=TRUE, message=FALSE}
-topgo_results <- map_dfr(topgo_methods, function(method)
-  Q(estimate_topgo,
-    gs=simGenesets,
-    tgData=list(tgData),
-    method=method,
-    pkgs=c('tidyverse', 'topGO'),
-    export=list(bgGenes=bgGenes,
-                root=root,
-                fdr_thr=fdr_thr),
-    n_jobs=150
-  ) %>%
-    set_names(names(simGenesets)) %>%
-    bind_rows(.id='gsSim')
+```{r topGOestimate, message=FALSE}
+topgo_results <- evalWithMemoization(
+  map_dfr(topgo_methods, function(method)
+    Q(estimate_topgo,
+      gs=simGenesets,
+      tgData=list(tgData),
+      method=method,
+      pkgs=c('tidyverse', 'topGO'),
+      export=list(bgGenes=bgGenes,
+                  root=root,
+                  fdr_thr=fdr_thr),
+      n_jobs=150
+    ) %>%
+      set_names(names(simGenesets)) %>%
+      bind_rows(.id='gsSim')
+  )
 )
 ```
 
@@ -672,9 +685,11 @@ estimate_and_performance <- function(df) {
 
 For instance, below we example the results of the particular simulation setting.
 
-```{r testProbSim, message=FALSE, cache=TRUE}
-testSim <- probSim(p_gs=0.05, p_g=0.5, p_n=1E-3) %>%
-  estimate_and_performance()
+```{r testProbSim, message=FALSE}
+testSim <- evalWithMemoization(
+  probSim(p_gs=0.05, p_g=0.5, p_n=1E-3) %>%
+    estimate_and_performance()
+)
 
 testSim %>%
   select(method, time, tpr, fpr, ppv, f1, median_overlap, min_overlap)
@@ -702,43 +717,46 @@ Due to the stochastic nature of sampling, in some runs no gene-set is selected a
 
 Below we run the full simulation.
 
-```{r fullSim, cache=TRUE}
-full_sim <- probSimParamsOneRep %>%
-  rowwise() %>%
-  mutate(
-    sim=list(probSim(p_gs=p_gs, p_g=p_g, p_n=p_n, seed=seed))
-    ) %>%
-  unnest(sim) %>%
-  rowwise() %>%
-  filter(length(goi) > 3)
+```{r fullSim}
+full_sim <- evalWithMemoization(
+  probSimParamsOneRep %>%
+    rowwise() %>%
+    mutate(
+      sim=list(probSim(p_gs=p_gs, p_g=p_g, p_n=p_n, seed=seed))
+      ) %>%
+    unnest(sim) %>%
+    rowwise() %>%
+    filter(length(goi) > 3)
+)
 ```
 
 Next we estimate gene sets. Warning: this is *very* slow.
 
-```{r fullEst, message=FALSE, cache=TRUE}
-# this is quite slow
-full_sim_res <- Q(
-  function(i) estimate_and_performance(full_sim[i,]),
-  i=1:nrow(full_sim),
-  pkgs=c('tidyverse', 'gerr', 'topGO'),
-  export=list(
-    bgGenes=bgGenes,
-    tgData=tgData,
-    gsMatrix=gsMatrix,
-    full_sim=full_sim,
-    simPairwiseOverlap=simPairwiseOverlap,
-    topgo_methods=topgo_methods,
-    estimate_and_performance=estimate_and_performance,
-    compute_performance=compute_performance,
-    estimate=estimate,
-    estimate_gerr=estimate_gerr,
-    estimate_topgo=estimate_topgo,
-    root=root,
-    fdr_thr=fdr_thr
-  ),
-  n_jobs=500
-) %>%
-  bind_rows()
+```{r fullEst, message=FALSE}
+full_sim_res <- evalWithMemoization(
+   Q(
+    function(i) estimate_and_performance(full_sim[i,]),
+    i=1:nrow(full_sim),
+    pkgs=c('tidyverse', 'gerr', 'topGO'),
+    export=list(
+      bgGenes=bgGenes,
+      tgData=tgData,
+      gsMatrix=gsMatrix,
+      full_sim=full_sim,
+      simPairwiseOverlap=simPairwiseOverlap,
+      topgo_methods=topgo_methods,
+      estimate_and_performance=estimate_and_performance,
+      compute_performance=compute_performance,
+      estimate=estimate,
+      estimate_gerr=estimate_gerr,
+      estimate_topgo=estimate_topgo,
+      root=root,
+      fdr_thr=fdr_thr
+    ),
+    n_jobs=500
+  ) %>%
+    bind_rows()
+)
 ```
 
 Summary of the simulations is shown below.
