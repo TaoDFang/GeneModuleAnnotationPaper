@@ -61,7 +61,7 @@ theme_set(theme_bw())
 
 We wish to use real-world gene-sets that are commonly used by the community for the simulation study for `gerr`, because synthesized gene-sets may have distributions of sizes, defined by the number of unique genes and overlapping patterns, that depart from real-world gene-sets. In this simulation we use a randomly selected subset of Gene Ontology Biological process annotation.
 
-When performing GO enrichment, usually GO-terms are propagated from child nodes to their parents. In the code below we select random subset of GO-categories and propagate them up to the root of the tree. In this way the number of GO-terms tested will be larger than the number of terms chosen.
+When performing GO enrichment, we need to account for the fact that GO-term of a parent node is also associated with all the child nodes. In the code below we select a random subset of GO-categories and include all their parents into the list of nodes. We also ensure that all the parent terms are explicitly encoded in the G matrix for genes assoicated with their children.
 
 ```{r gmt}
 # extract GO graph
@@ -493,7 +493,7 @@ all_verif %>%
   ylab("Gene-set count") +
   theme(axis.text.x=element_text(angle = 0)) +
   scale_color_brewer(palette = "Set1") +
-  facet_wrap(~method, ncol=1) +
+  #facet_wrap(~method, ncol=1) +
   theme(strip.background = element_blank(),
         strip.text.x = element_blank())
 ```
