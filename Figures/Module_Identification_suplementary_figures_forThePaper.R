@@ -39,10 +39,13 @@ ggsave(filename = "Fig1A.jpg",
        ylab('Num of gene-sets')+
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-        theme(text = element_text(size=10),legend.position = "none"),
-       width = 75,
-       height = 60,
-       units = "mm",
+        theme(text = element_text(size=20),legend.position = "none"),
+       # width = 75,
+       # height = 60,
+       # units = "mm",
+       width = 4,
+       height = 4,
+       units = "in",
        dpi = 600)
 
 ###median=XXX, interquartile range/IQR=XXX
@@ -70,10 +73,13 @@ ggsave(filename = "Fig1B.jpg",
          geom_abline(intercept = 0, slope = 1,colour='red',linetype="dashed")+
          xlab("Num of gene-sets by FET+FDR")+
          ylab('Num of gene-sets by gerr')+
-         theme(text = element_text(size=10)),
-       width = 75,
-       height = 60,
-       units = "mm",
+         theme(text = element_text(size=16)),
+       # width = 75,
+       # height = 60,
+       # units = "mm",
+       width = 4,
+       height = 4,
+       units = "in",
        dpi = 600)
 
 ### correlation
@@ -160,12 +166,15 @@ ggsave(filename = "Fig1C.jpg",
          #geom_density(aes(y=..density..)) +
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-         theme(text = element_text(size=10))+
+         theme(text = element_text(size=16))+
          xlab("Overlap coefficients of gene-sets")+
          ylab('Density'),
-       width = 75,
-       height = 60,
-       units = "mm",
+       # width = 75,
+       # height = 60,
+       # units = "mm",
+       width = 4,
+       height = 4,
+       units = "in",
        dpi = 600)
 
 ggsave(filename = "Fig1C_jaccardIndex.jpg",
@@ -196,12 +205,15 @@ ggsave(filename = "Fig1D.jpg",
          #geom_density(aes(y=..density..)) +
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-         theme(text = element_text(size=10))+
+         theme(text = element_text(size=16))+
          xlab("Overlap coefficients of genes")+
          ylab('Density'),
-       width = 75,
-       height = 60,
-       units = "mm",
+       # width = 75,
+       # height = 60,
+       # units = "mm",
+       width = 4,
+       height = 4,
+       units = "in",
        dpi = 600)
 
 
@@ -290,9 +302,12 @@ ggsave(filename = "Fig1I.jpg",
          #theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
          theme(legend.position = "top",legend.title=element_blank())+
          theme(text = element_text(size=10)),
-       width = 75,
-       height = 60,
-       units = "mm",
+       # width = 75,
+       # height = 60,
+       # units = "mm",
+       width = 4,
+       height = 4,
+       units = "in",
        dpi = 600)
 
 
@@ -338,9 +353,12 @@ ggsave(filename = "Fig1J.pdf",
          xlab("Modules")+
          ylab('Proportion')+
          theme(text = element_text(size=10)),
-       width = 75,
-       height = 60,
-       units = "mm",
+       # width = 75,
+       # height = 60,
+       # units = "mm",
+       width = 4,
+       height = 4,
+       units = "in",
        dpi = 600)
 
 # run imagemagic
@@ -409,9 +427,12 @@ ggsave(filename = "Fig1E.jpg",
          theme(text = element_text(size=8))+
          xlab("Normalized ranks ")+
          ylab('Density'),
-       width = 85,
-       height = 100,
-       units = "mm",
+       # width = 85,
+       # height = 100,
+       # units = "mm",
+       width = 4,
+       height = 4,
+       units = "in",
        dpi = 600)
 
 
@@ -429,9 +450,12 @@ ggsave(filename = "Fig1F.jpg",
          theme(text = element_text(size=8))+
          xlab("Normalized ranks ")+
          ylab('Density'),
-       width = 85,
-       height = 100,
-       units = "mm",
+       # width = 85,
+       # height = 100,
+       # units = "mm",
+       width = 4,
+       height = 4,
+       units = "in",
        dpi = 600)
 
 
@@ -444,15 +468,18 @@ ggsave(filename = "Fig1G.jpg",
          xlab('Normalized rank (gene-sets)')+ylab('density')+
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-         theme(legend.title = element_text(size=8),legend.text=element_text(size=8), legend.key.size = unit(0.3, "cm"),
-               text = element_text(size=10) )+
+         theme(legend.title = element_text(size=12),legend.text=element_text(size=12), legend.key.size = unit(0.3, "cm"),
+               text = element_text(size=16) )+
          theme(legend.position = "top",legend.title=element_blank()),
          #theme(legend.position = "top"),
          #scale_fill_manual(name = "", values = c("#E69F00", "#56B4E9"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
          #scale_fill_manual(name = "", values = c("black", "red"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
-       width = 75,
-       height = 60,
-       units = "mm",
+       # width = 75,
+       # height = 60,
+       # units = "mm",
+       width = 4,
+       height = 4,
+       units = "in",
        dpi = 600)
 
 
@@ -510,14 +537,17 @@ ggsave(filename = "Fig1H.jpg",
          xlab('Normalized rank (genes)')+ylab('density')+    
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-       theme(legend.title = element_text(size=8),legend.text=element_text(size=8), legend.key.size = unit(0.3, "cm"),
-                                                                        text = element_text(size=10))+
+       theme(legend.title = element_text(size=12),legend.text=element_text(size=12), legend.key.size = unit(0.3, "cm"),
+                                                                        text = element_text(size=16))+
        theme(legend.position = "top",legend.title=element_blank()),
        #scale_fill_manual(name = "", values = c("#E69F00", "#56B4E9"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
        #scale_fill_manual(name = "", values = c("black", "red"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
-       width = 75,
-       height = 60,
-       units = "mm",
+       # width = 75,
+       # height = 60,
+       # units = "mm",
+       width = 4,
+       height = 4,
+       units = "in",
        dpi = 600)
 
 
