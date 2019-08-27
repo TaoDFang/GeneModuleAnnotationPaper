@@ -29,17 +29,17 @@ for (i in 1:length(daniel_module_names)) {
 
 
 
-combined_hist_frame=data.frame(name=c(rep('gerr',nrow(hist_tao)),rep('FET+FDR',nrow(hist_daniel))),
+combined_hist_frame=data.frame(Method=c(rep('gerr',nrow(hist_tao)),rep('FET+FDR',nrow(hist_daniel))),
                                pathway_num=c(hist_tao$pathway_num,hist_daniel$pathway_num))
 
 ggsave(filename = "Fig1A.jpg",
-       plot = ggplot(combined_hist_frame,aes(x=name,y=pathway_num))+
+       plot = ggplot(combined_hist_frame,aes(x=Method,y=pathway_num,fill=Method))+
          geom_boxplot()+
        xlab("Method")+
        ylab('Num of gene-sets')+
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-        theme(text = element_text(size=10)),
+        theme(text = element_text(size=10),legend.position = "none"),
        width = 75,
        height = 60,
        units = "mm",
@@ -63,7 +63,8 @@ scatter_plot=data.frame(module=common_module_names,row.names = common_module_nam
                         )
 
 ggsave(filename = "Fig1B.jpg",
-       plot =ggplot(scatter_plot, aes(x=daniel_pathway_num, y=tao_pathway_num)) + geom_point(shape=1,size=1) +
+       plot =ggplot(scatter_plot, aes(x=daniel_pathway_num, y=tao_pathway_num)) + geom_point(shape=16,size=1,alpha=0.5) +
+         #geom_density_2d()+
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
          geom_abline(intercept = 0, slope = 1,colour='red',linetype="dashed")+
@@ -154,9 +155,9 @@ ggsave(filename = "Fig1C.jpg",
          geom_histogram(
            aes(y=..density..),
            bins=30,
-           colour="black", fill="white"
+           colour="black", fill="lightblue"
          )+
-         geom_density(aes(y=..density..)) +
+         #geom_density(aes(y=..density..)) +
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
          theme(text = element_text(size=10))+
@@ -172,7 +173,7 @@ ggsave(filename = "Fig1C_jaccardIndex.jpg",
          geom_histogram(
            aes(y=..density..),
            bins=30,
-           colour="black", fill="white"
+           colour="black", fill="lightblue"
          )+
          geom_density(aes(y=..density..)) +
          theme_bw()+
@@ -190,9 +191,9 @@ ggsave(filename = "Fig1D.jpg",
          geom_histogram(
            aes(y=..density..),
            bins=30,
-           colour="black", fill="white"
+           colour="black", fill="lightblue"
          )+
-         geom_density(aes(y=..density..)) +
+         #geom_density(aes(y=..density..)) +
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
          theme(text = element_text(size=10))+
@@ -326,11 +327,8 @@ stackedBarplot_gerr_frame=stackedBarplot_frame[stackedBarplot_frame$method=="ger
 stackedBarplot_frame$module_names=factor(stackedBarplot_frame$module_names,levels =stackedBarplot_gerr_frame$module_names[order(stackedBarplot_gerr_frame$ratio)] )
 ggsave(filename = "Fig1J.pdf",
        plot =ggplot(stackedBarplot_frame, aes(x=module_names, y=ratio,fill=method)) +
-<<<<<<< HEAD
          geom_bar(stat="identity",width = 1)+
-=======
          geom_bar(stat="identity", width=1)+
->>>>>>> eeecafac6d3fe94a9d66998be4415fdcea895595
          theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
                             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
          theme(legend.title = element_text(size=8),legend.text=element_text(size=8), legend.key.size = unit(0.3, "cm"),
@@ -498,9 +496,10 @@ for(i in 1:length(common_module_names)){
   
 }
 
-saveRDS(gerr_FETFDR_genes_list,"gerr_FETFDR_genes_list.rds")
-saveRDS(nonGerr_FETFDR_genes_list,"nonGerr_FETFDR_genes_list.rds")
-
+#saveRDS(gerr_FETFDR_genes_list,"gerr_FETFDR_genes_list.rds")
+#saveRDS(nonGerr_FETFDR_genes_list,"nonGerr_FETFDR_genes_list.rds")
+gerr_FETFDR_genes_list=readRDS("gerr_FETFDR_genes_list.rds")
+nonGerr_FETFDR_genes_list=readRDS("nonGerr_FETFDR_genes_list.rds")
 
 gerr_FETFDR_genes_normRanks=data.frame(gerr_FETFFDR=gerr_FETFDR_genes_list)
 nonGerr_FETFDR_genes_normRanks=data.frame(nonGerr_FETFFDR=nonGerr_FETFDR_genes_list)
