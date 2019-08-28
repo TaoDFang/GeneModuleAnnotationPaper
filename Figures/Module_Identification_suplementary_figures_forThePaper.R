@@ -1,6 +1,8 @@
 library(ggplot2)
 library(RColorBrewer)
 setwd("../Figures/")
+library(grid)
+library(gridExtra)
 
 Daniel_results_name="dream_consensus_modules.functional_enrichment.txt"
 Daniel_results=read.csv(Daniel_results_name,header = TRUE,sep = "\t",stringsAsFactors = FALSE)
@@ -32,21 +34,28 @@ for (i in 1:length(daniel_module_names)) {
 combined_hist_frame=data.frame(Method=c(rep('gerr',nrow(hist_tao)),rep('FET+FDR',nrow(hist_daniel))),
                                pathway_num=c(hist_tao$pathway_num,hist_daniel$pathway_num))
 
-ggsave(filename = "Fig1A.jpg",
-       plot = ggplot(combined_hist_frame,aes(x=Method,y=pathway_num,fill=Method))+
-         geom_boxplot()+
-       xlab("Method")+
-       ylab('Num of gene-sets')+
-         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-        theme(text = element_text(size=20),legend.position = "none"),
-       # width = 75,
-       # height = 60,
-       # units = "mm",
+myTheme <-   theme_bw() + 
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        axis.text = element_text(size=12),
+        axis.title = element_text(size=14),
+        legend.text = element_text(size=12),
+        legend.title = element_text(size=14),
+        text = element_text(size=14),legend.position = "none")
+theme_set(myTheme)
+fig1A <- ggplot(combined_hist_frame,aes(x=Method,y=pathway_num,fill=Method))+
+  geom_boxplot()+
+  xlab("Method")+
+  ylab('Number of gene-sets') +
+  myTheme
+
+print(fig1A)
+ggsave(filename = "Fig1A.pdf",
+       plot = fig1A,
        width = 4,
-       height = 4,
-       units = "in",
-       dpi = 600)
+       height = 4)
 
 ###median=XXX, interquartile range/IQR=XXX
 summary(combined_hist_frame[combined_hist_frame$name=="gerr","pathway_num"]) #9.000
@@ -65,22 +74,17 @@ scatter_plot=data.frame(module=common_module_names,row.names = common_module_nam
                         daniel_pathway_num=hist_daniel[common_module_names,]$pathway_num
                         )
 
-ggsave(filename = "Fig1B.jpg",
-       plot =ggplot(scatter_plot, aes(x=daniel_pathway_num, y=tao_pathway_num)) + geom_point(shape=16,size=1,alpha=0.5) +
-         #geom_density_2d()+
-         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-         geom_abline(intercept = 0, slope = 1,colour='red',linetype="dashed")+
-         xlab("Num of gene-sets by FET+FDR")+
-         ylab('Num of gene-sets by gerr')+
-         theme(text = element_text(size=16)),
-       # width = 75,
-       # height = 60,
-       # units = "mm",
+fig1B <- ggplot(scatter_plot, aes(x=daniel_pathway_num, y=tao_pathway_num)) + 
+  geom_point(shape=16,size=1.25,alpha=0.5) +
+  geom_abline(intercept = 0, slope = 1,colour='red',linetype="dashed")+
+  xlab("Number of gene-sets [FET+FDR]")+
+  ylab('Number of gene-sets [gerr]')+
+  myTheme
+print(fig1B)
+ggsave(filename = "Fig1B.pdf",
+       plot =fig1B,
        width = 4,
-       height = 4,
-       units = "in",
-       dpi = 600)
+       height = 4)
 
 ### correlation
 cor(scatter_plot$tao_pathway_num,scatter_plot$daniel_pathway_num,method = "pearson") ##0.70
@@ -156,84 +160,69 @@ for(i in 1:length(common_module_names)){
 }
 
 
-ggsave(filename = "Fig1C.jpg",
-       plot = ggplot(overlap_go_terms_frame,aes(x=overlapCoef_go_pathway_num))+
-         geom_histogram(
-           aes(y=..density..),
-           bins=30,
-           colour="black", fill="lightblue"
-         )+
-         #geom_density(aes(y=..density..)) +
-         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-         theme(text = element_text(size=16))+
-         xlab("Overlap coefficients of gene-sets")+
-         ylab('Density'),
-       # width = 75,
-       # height = 60,
-       # units = "mm",
+fig1C <- ggplot(overlap_go_terms_frame,aes(x=overlapCoef_go_pathway_num))+
+  geom_histogram(
+    aes(y=..density..),
+    bins=30,
+    colour="black", fill="lightblue"
+  )+
+  #geom_density(aes(y=..density..)) +
+  myTheme +
+  xlab("Overlap coefficient of hit gene-sets")+
+  ylab('Density')
+print(fig1C)
+ggsave(filename = "Fig1C.pdf",
+       plot = fig1C,
        width = 4,
-       height = 4,
-       units = "in",
-       dpi = 600)
+       height = 4)
 
-ggsave(filename = "Fig1C_jaccardIndex.jpg",
-       plot = ggplot(overlap_go_terms_frame,aes(x=jaccardJndex_go_pathway_num))+
-         geom_histogram(
-           aes(y=..density..),
-           bins=30,
-           colour="black", fill="lightblue"
-         )+
-         geom_density(aes(y=..density..)) +
-         theme_bw()+
-         theme(text = element_text(size=10))+
-         xlab("Jaccard index of gene-sets")+
-         ylab('Density'),
-       width = 85,
-       height = 100,
-       units = "mm",
-       dpi = 600)
+fig1Cjac <- ggplot(overlap_go_terms_frame,aes(x=jaccardJndex_go_pathway_num))+
+  geom_histogram(
+    aes(y=..density..),
+    bins=30,
+    colour="black", fill="lightblue"
+  )+
+  geom_density(aes(y=..density..)) +
+  myTheme +
+  xlab("Jaccard index of hit gene-sets")+
+  ylab('Density')
+print(fig1Cjac)
+ggsave(filename = "Fig1C_jaccardIndex.pdf",
+       plot = fig1Cjac,
+       width = 4, 
+       height=4)
 
-
-ggsave(filename = "Fig1D.jpg",
-       plot = ggplot(overlap_go_terms_frame,aes(x=overlapCoef_go_gene_num))+
-         geom_histogram(
-           aes(y=..density..),
-           bins=30,
-           colour="black", fill="lightblue"
-         )+
-         #geom_density(aes(y=..density..)) +
-         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-         theme(text = element_text(size=16))+
-         xlab("Overlap coefficients of genes")+
-         ylab('Density'),
-       # width = 75,
-       # height = 60,
-       # units = "mm",
+fig1D <- ggplot(overlap_go_terms_frame,aes(x=overlapCoef_go_gene_num))+
+  geom_histogram(
+    aes(y=..density..),
+    bins=30,
+    colour="black", fill="lightblue"
+  )+
+  myTheme +
+  xlab("Overlap coefficient of leading-edge genes")+
+  theme(axis.title.x = element_text(size=13)) +
+  ylab('Density')
+print(fig1D)
+ggsave(filename = "Fig1D.pdf",
+       plot = fig1D,
        width = 4,
-       height = 4,
-       units = "in",
-       dpi = 600)
+       height = 4)
 
-
-ggsave(filename = "Fig1D_jaccardIndex.jpg",
-       plot = ggplot(overlap_go_terms_frame,aes(x=jaccardJndex_go_gene_num))+
-         geom_histogram(
-           aes(y=..density..),
-           bins=30,
-           colour="black", fill="white"
-         )+
-         geom_density(aes(y=..density..)) +
-         theme_bw()+
-         theme(text = element_text(size=8))+
-         xlab("Jaccard index of genes")+
-         ylab('Density'),
-       width = 85,
-       height = 100,
-       units = "mm",
-       dpi = 600)
-
+fig1Djac <- ggplot(overlap_go_terms_frame,aes(x=jaccardJndex_go_gene_num))+
+  geom_histogram(
+    aes(y=..density..),
+    bins=30,
+    colour="black", fill="lightblue"
+  )+
+  geom_density(aes(y=..density..)) +
+  xlab("Jaccard index of leading-edge genes")+
+  ylab('Density') +
+  myTheme
+print(fig1Djac)
+ggsave(filename = "Fig1D_jaccardIndex.pdf",
+       plot = fig1Djac,
+       width = 4,
+       height = 4)
 
 
 ## fig1I
@@ -292,23 +281,22 @@ for(i in 1:length(common_module_names)){
 
 
 GOIgenes_frame$method=factor(GOIgenes_frame$method,levels = c("FET+FDR only","FET+FDR & gerr","gerr only"))
-ggsave(filename = "Fig1I.jpg",
-       plot =ggplot(GOIgenes_frame, aes(x=ratio,y=..scaled..,fill=method)) +
-         geom_density(alpha=0.4)+
-         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-         theme(legend.title = element_text(size=8),legend.text=element_text(size=8), legend.key.size = unit(0.3, "cm"),
-               text = element_text(size=10))+
-         #theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
-         theme(legend.position = "top",legend.title=element_blank())+
-         theme(text = element_text(size=10)),
-       # width = 75,
-       # height = 60,
-       # units = "mm",
+
+myLegendTheme <- myTheme + theme(legend.title = element_text(size=12),
+                                 legend.text=element_text(size=12), 
+                                 legend.key.size = unit(0.5, "cm"),
+                                 text = element_text(size=12))+
+  theme(legend.position = "top",legend.title=element_blank())
+fig1I <- ggplot(GOIgenes_frame, aes(x=ratio,y=..scaled..,fill=method)) +
+  geom_density(alpha=0.4)+
+  myLegendTheme +
+  ylab("Scaled density") + xlab("Ratio")
+  
+print(fig1I)
+ggsave(filename = "Fig1I.pdf",
+       plot =fig1I,
        width = 4,
-       height = 4,
-       units = "in",
-       dpi = 600)
+       height = 4)
 
 
 
@@ -340,26 +328,18 @@ for(i in 1:length(common_module_names)){
 stackedBarplot_frame$method=factor(stackedBarplot_frame$method,levels = c("FET+FDR only","FET+FDR & gerr","gerr only"))
 stackedBarplot_gerr_frame=stackedBarplot_frame[stackedBarplot_frame$method=="gerr only",]
 stackedBarplot_frame$module_names=factor(stackedBarplot_frame$module_names,levels =stackedBarplot_gerr_frame$module_names[order(stackedBarplot_gerr_frame$ratio)] )
+fig1J <- ggplot(stackedBarplot_frame, aes(x=module_names, y=ratio,fill=method)) +
+  geom_bar(stat="identity",width = 1)+
+  geom_bar(stat="identity", width=1)+
+  myLegendTheme +
+  theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
+  xlab("Modules (ranked by gerr-only proportion)")+
+  ylab('Proportion')
+print(fig1J)
 ggsave(filename = "Fig1J.pdf",
-       plot =ggplot(stackedBarplot_frame, aes(x=module_names, y=ratio,fill=method)) +
-         geom_bar(stat="identity",width = 1)+
-         geom_bar(stat="identity", width=1)+
-         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-         theme(legend.title = element_text(size=8),legend.text=element_text(size=8), legend.key.size = unit(0.3, "cm"),
-               text = element_text(size=10))+
-         theme(axis.text.x=element_blank(),axis.ticks.x=element_blank())+
-         theme(legend.position = "top",legend.title=element_blank())+
-         xlab("Modules")+
-         ylab('Proportion')+
-         theme(text = element_text(size=10)),
-       # width = 75,
-       # height = 60,
-       # units = "mm",
-       width = 4,
-       height = 4,
-       units = "in",
-       dpi = 600)
+       plot = fig1J,
+       width = 6,
+       height = 4)
 
 # run imagemagic
 # convert -density 600 -median 3 Fig1J.pdf Fig1J.jpg
@@ -415,143 +395,157 @@ for(i in 1:length(common_module_names)){
 
 
 gerr_FETFDR_normRanks=data.frame(gerr_FETFFDR=gerr_FETFDR_list)
-ggsave(filename = "Fig1E.jpg",
-       plot = ggplot(gerr_FETFDR_normRanks,aes(x=gerr_FETFFDR))+
-         geom_histogram(
-           aes(y=..density..),
-           bins=30,
-           colour="black", fill="white"
-         )+
-         geom_density(aes(y=..density..)) +
-         theme_bw()+
-         theme(text = element_text(size=8))+
-         xlab("Normalized ranks ")+
-         ylab('Density'),
-       # width = 85,
-       # height = 100,
-       # units = "mm",
+
+fig1E.old <- ggplot(gerr_FETFDR_normRanks,aes(x=gerr_FETFFDR))+
+  geom_histogram(
+    aes(y=..density..),
+    bins=30,
+    colour="black", fill="lightblue"
+  )+
+  geom_density(aes(y=..density..)) +
+  myTheme +
+  xlab("Normalized ranks")+
+  ylab('Density')
+print(fig1E.old)
+ggsave(filename = "Fig1E-old.pdf",
+       plot = fig1E.old,
        width = 4,
-       height = 4,
-       units = "in",
-       dpi = 600)
+       height = 4)
 
 
 ##
 nonGerr_FETFDR_normRanks=data.frame(nonGerr_FETFFDR=nonGerr_FETFDR_list)
-ggsave(filename = "Fig1F.jpg",
-       plot = ggplot(nonGerr_FETFDR_normRanks,aes(x=nonGerr_FETFFDR))+
-         geom_histogram(
-           aes(y=..density..),
-           bins=30,
-           colour="black", fill="white"
-         )+
-         geom_density(aes(y=..density..)) +
-         theme_bw()+
-         theme(text = element_text(size=8))+
-         xlab("Normalized ranks ")+
-         ylab('Density'),
-       # width = 85,
-       # height = 100,
-       # units = "mm",
+fig1F.old <- ggplot(nonGerr_FETFDR_normRanks,aes(x=nonGerr_FETFFDR))+
+  geom_histogram(
+    aes(y=..density..),
+    bins=30,
+    colour="black", fill="white"
+  )+
+  geom_density(aes(y=..density..)) +
+  theme_bw()+
+  theme(text = element_text(size=8))+
+  xlab("Normalized ranks ")+
+  ylab('Density')
+print(fig1F.old)
+ggsave(filename = "Fig1F-old.pdf",
+       plot = fig1F.old,
        width = 4,
-       height = 4,
-       units = "in",
-       dpi = 600)
+       height = 4)
 
 
 
 
-ggsave(filename = "Fig1G.jpg",
-       plot = ggplot() + 
-         geom_density(data =gerr_FETFDR_normRanks, aes(x = gerr_FETFFDR,fill = "FET+FDR & gerr "),color = "black",alpha=0.7) + 
-         geom_density(data = nonGerr_FETFDR_normRanks, aes(x = nonGerr_FETFFDR,fill = "FET+FDR only"),color = "black", alpha = 0.7)+
-         xlab('Normalized rank (gene-sets)')+ylab('density')+
-         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-         theme(legend.title = element_text(size=12),legend.text=element_text(size=12), legend.key.size = unit(0.3, "cm"),
-               text = element_text(size=16) )+
-         theme(legend.position = "top",legend.title=element_blank()),
-         #theme(legend.position = "top"),
-         #scale_fill_manual(name = "", values = c("#E69F00", "#56B4E9"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
-         #scale_fill_manual(name = "", values = c("black", "red"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
-       # width = 75,
-       # height = 60,
-       # units = "mm",
+fig1E <- ggplot() + 
+  geom_density(data =gerr_FETFDR_normRanks, aes(x = gerr_FETFFDR,fill = "FET+FDR & gerr "),color = "black",alpha=0.7) + 
+  geom_density(data = nonGerr_FETFDR_normRanks, aes(x = nonGerr_FETFFDR,fill = "FET+FDR only"),color = "black", alpha = 0.7)+
+  xlab('Normalized rank of hit gene-sets by FDR')+ylab('Density')+
+  myLegendTheme
+print(fig1E)
+ggsave(filename = "Fig1E.pdf",
+       plot = fig1E,
        width = 4,
-       height = 4,
-       units = "in",
-       dpi = 600)
+       height = 4)
 
 
 
 ## Fig 1H
 
-gerr_FETFDR_genes_list=c()
-nonGerr_FETFDR_genes_list=c()
-for(i in 1:length(common_module_names)){
-  print(i)
-  tao_module_go_ids=Tao_go_results[Tao_go_results$module==common_module_names[i],"pathway_id"]
-  tao_module_go_genes=unique(unlist(lapply(tao_module_go_ids, function(id){go_list[[id]]})))
-  
-  daniel_module_go_ids=Daniel_network_GO_results[Daniel_network_GO_results$module==common_module_names[i],"termId"]
-  daniel_module_go_ranks=rank(Daniel_network_GO_results[Daniel_network_GO_results$module==common_module_names[i],"P.noncentral.fdr"],
-                              ties.method = "min")
-  names(daniel_module_go_ranks)=daniel_module_go_ids
-  daniel_module_go_norm_ranks=daniel_module_go_ranks/length(daniel_module_go_ranks)
-  
+gerrRds <- "gerr_FETFDR_genes_list.rds"
+nongerrRds <- "nonGerr_FETFDR_genes_list.rds"
 
-  daniel_module_go_genes=unique(unlist(lapply(daniel_module_go_ids, function(id){go_list[[id]]})))
-  daniel_module_go_genes_norm_ranks=c()
-  for(gene in daniel_module_go_genes){
-    a=1
-    for (id in daniel_module_go_ids) {
-      if(gene %in% go_list[[id]] ){
-        a=min(a,daniel_module_go_norm_ranks[id])
+if(!file.exists(gerrRds) || !file.exists(nongerrRds)) {
+  gerr_FETFDR_genes_list=c()
+  nonGerr_FETFDR_genes_list=c()
+  for(i in 1:length(common_module_names)){
+    print(i)
+    tao_module_go_ids=Tao_go_results[Tao_go_results$module==common_module_names[i],"pathway_id"]
+    tao_module_go_genes=unique(unlist(lapply(tao_module_go_ids, function(id){go_list[[id]]})))
+    
+    daniel_module_go_ids=Daniel_network_GO_results[Daniel_network_GO_results$module==common_module_names[i],"termId"]
+    daniel_module_go_ranks=rank(Daniel_network_GO_results[Daniel_network_GO_results$module==common_module_names[i],"P.noncentral.fdr"],
+                                ties.method = "min")
+    names(daniel_module_go_ranks)=daniel_module_go_ids
+    daniel_module_go_norm_ranks=daniel_module_go_ranks/length(daniel_module_go_ranks)
+    
+    
+    daniel_module_go_genes=unique(unlist(lapply(daniel_module_go_ids, function(id){go_list[[id]]})))
+    daniel_module_go_genes_norm_ranks=c()
+    for(gene in daniel_module_go_genes){
+      a=1
+      for (id in daniel_module_go_ids) {
+        if(gene %in% go_list[[id]] ){
+          a=min(a,daniel_module_go_norm_ranks[id])
+        }
       }
+      daniel_module_go_genes_norm_ranks=c(daniel_module_go_genes_norm_ranks,a)
     }
-    daniel_module_go_genes_norm_ranks=c(daniel_module_go_genes_norm_ranks,a)
+    names(daniel_module_go_genes_norm_ranks)=daniel_module_go_genes
+    
+    
+    overlap_genes=intersect(tao_module_go_genes,daniel_module_go_genes)
+    gerr_FETFDR_genes=daniel_module_go_genes_norm_ranks[overlap_genes]
+    nonGerr_FETFDR_genes=daniel_module_go_genes_norm_ranks[setdiff(daniel_module_go_genes,overlap_genes)]
+    
+    gerr_FETFDR_genes_list=c(gerr_FETFDR_genes_list,gerr_FETFDR_genes)
+    nonGerr_FETFDR_genes_list=c(nonGerr_FETFDR_genes_list,nonGerr_FETFDR_genes)
+    
   }
-  names(daniel_module_go_genes_norm_ranks)=daniel_module_go_genes
   
-  
-  overlap_genes=intersect(tao_module_go_genes,daniel_module_go_genes)
-  gerr_FETFDR_genes=daniel_module_go_genes_norm_ranks[overlap_genes]
-  nonGerr_FETFDR_genes=daniel_module_go_genes_norm_ranks[setdiff(daniel_module_go_genes,overlap_genes)]
-  
-  gerr_FETFDR_genes_list=c(gerr_FETFDR_genes_list,gerr_FETFDR_genes)
-  nonGerr_FETFDR_genes_list=c(nonGerr_FETFDR_genes_list,nonGerr_FETFDR_genes)
-  
+  saveRDS(gerr_FETFDR_genes_list, gerrRds)
+  saveRDS(nonGerr_FETFDR_genes_list, nongerrRds)
+} else {
+  gerr_FETFDR_genes_list=readRDS("gerr_FETFDR_genes_list.rds")
+  nonGerr_FETFDR_genes_list=readRDS("nonGerr_FETFDR_genes_list.rds")
 }
-
-#saveRDS(gerr_FETFDR_genes_list,"gerr_FETFDR_genes_list.rds")
-#saveRDS(nonGerr_FETFDR_genes_list,"nonGerr_FETFDR_genes_list.rds")
-gerr_FETFDR_genes_list=readRDS("gerr_FETFDR_genes_list.rds")
-nonGerr_FETFDR_genes_list=readRDS("nonGerr_FETFDR_genes_list.rds")
 
 gerr_FETFDR_genes_normRanks=data.frame(gerr_FETFFDR=gerr_FETFDR_genes_list)
 nonGerr_FETFDR_genes_normRanks=data.frame(nonGerr_FETFFDR=nonGerr_FETFDR_genes_list)
-ggsave(filename = "Fig1H.jpg",
-       plot = ggplot() + 
-         geom_density(data =gerr_FETFDR_genes_normRanks, aes(x = gerr_FETFFDR,fill = "FET+FDR & gerr"),color = "black",alpha=0.7) + 
-         geom_density(data = nonGerr_FETFDR_genes_normRanks, aes(x = nonGerr_FETFFDR,fill = "FET+FDR only"),color = "black", alpha = 0.7)+
-         xlab('Normalized rank (genes)')+ylab('density')+    
-         theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
-                            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
-       theme(legend.title = element_text(size=12),legend.text=element_text(size=12), legend.key.size = unit(0.3, "cm"),
-                                                                        text = element_text(size=16))+
-       theme(legend.position = "top",legend.title=element_blank()),
-       #scale_fill_manual(name = "", values = c("#E69F00", "#56B4E9"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
-       #scale_fill_manual(name = "", values = c("black", "red"), labels = c("1" = "gerr", "2" = "nonGerr")) ,
-       # width = 75,
-       # height = 60,
-       # units = "mm",
+
+fig1F <- ggplot() + 
+  geom_density(data =gerr_FETFDR_genes_normRanks, aes(x = gerr_FETFFDR,fill = "FET+FDR & gerr"),color = "black",alpha=0.7) + 
+  geom_density(data = nonGerr_FETFDR_genes_normRanks, aes(x = nonGerr_FETFFDR,fill = "FET+FDR only"),color = "black", alpha = 0.7)+
+  xlab('Normalized rank of leading-edge genes')+ylab('Density')+    
+  myLegendTheme
+print(fig1F)
+ggsave(filename = "Fig1F.pdf",
+       plot = fig1F,
        width = 4,
-       height = 4,
-       units = "in",
-       dpi = 600)
+       height = 4)
+
+save(fig1A, fig1B, fig1C, fig1Cjac,
+     fig1D, fig1Djac,
+     fig1E.old, fig1F.old,
+     fig1E, fig1F,
+     file="gerr-fig3-ggobj.RData")
 
 
+figurePanel <- function(gg, title) {
+  titleg <- grid::textGrob(title, x=unit(0, "npc"), y=unit(1, "npc"), 
+                           just=c("left", "top"),
+                           gp=grid::gpar(col="black", fontsize=18, fontface="bold"))
+  compactPlot <- gg + ggplot2::theme(
+    plot.margin = unit(c(0,0,0,0), "cm"),
+    axis.title.x = ggplot2::element_text(margin=ggplot2::margin(2,0,0,0)), 
+    axis.title.y = ggplot2::element_text(margin=ggplot2::margin(0,2,0,0)))
+  res <- gridExtra::arrangeGrob(compactPlot,
+                                top=titleg,
+                                padding = unit(0.15, "line"))
+  return(res)
+}
 
-
-
-
+pA <- figurePanel(fig1A ,"A")
+pB <- figurePanel(fig1B, "B")
+pC <- figurePanel(fig1C, "C")
+pD <- figurePanel(fig1D ,"D")
+pE <- figurePanel(fig1E, "E")
+pF <- figurePanel(fig1F, "F")
+layoutMatrix <- matrix(c(1, 2, 
+                         3, 4,
+                         5, 6), byrow=TRUE, ncol=2)
+fig3 <- grid.arrange(grobs=list(pA, pB, pC, pD, pE, pF),
+             layout_matrix=layoutMatrix)
+fig3
+ggsave(filename = "Fig3.pdf",
+       plot = fig3,
+       width = 8,
+       height = 10)
