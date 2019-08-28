@@ -290,10 +290,10 @@ myLegendTheme <- myTheme + theme(legend.title = element_text(size=12),
 fig1I <- ggplot(GOIgenes_frame, aes(x=ratio,y=..scaled..,fill=method)) +
   geom_density(alpha=0.4)+
   myLegendTheme +
-  ylab("Scaled density") + xlab("Ratio")
+  ylab("Scaled density") + xlab("Ratio [log2]")
   
 print(fig1I)
-ggsave(filename = "Fig1I.pdf",
+ggsave(filename = "SuppDoc4-Fig1.pdf",
        plot =fig1I,
        width = 4,
        height = 4)
@@ -336,7 +336,7 @@ fig1J <- ggplot(stackedBarplot_frame, aes(x=module_names, y=ratio,fill=method)) 
   xlab("Modules (ranked by gerr-only proportion)")+
   ylab('Proportion')
 print(fig1J)
-ggsave(filename = "Fig1J.pdf",
+ggsave(filename = "SuppDoc4-Fig2.pdf",
        plot = fig1J,
        width = 6,
        height = 4)
